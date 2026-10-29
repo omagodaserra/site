@@ -1,14 +1,14 @@
 // =====================================================
-// O MAGO DA SERRA - JAVASCRIPT PRINCIPAL
-// Arquivo responsável pelos comportamentos e interações do site
+// CAMARSAN - JAVASCRIPT PRINCIPAL
+// Arquivo responsável pelos comportamentos da página inicial
 // =====================================================
 
 const CONFIG = {
-    // Endereço real da sua API no PythonAnywhere
-    API_URL: "https://omagodaserra.pythonanywhere.com",
+    // Endereço da API da CamarSan
+    API_URL: "https://aliancascamarsan1993.pythonanywhere.com",
 
     // Nome da aplicação
-    APP_NAME: "O Mago da Serra"
+    APP_NAME: "CamarSan"
 };
 
 
@@ -20,56 +20,124 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarSite();
     const menuToggleBtn = document.getElementById("menu-toggle-btn");
     const navDropdownMenu = document.getElementById("nav-dropdown-menu");
+    
+    const filtroToggleBtn = document.getElementById("filtro-toggle-btn");
+    const filtroDropdownMenu = document.getElementById("filtro-dropdown-menu");
 
     // Lógica do Menu Principal
     if (menuToggleBtn && navDropdownMenu) {
         menuToggleBtn.addEventListener("click", (e) => {
             e.stopPropagation();
+            if (filtroDropdownMenu) filtroDropdownMenu.classList.remove("ativo");
             navDropdownMenu.classList.toggle("ativo");
         });
     }
 
-    // Fecha o menu ao clicar fora
+    // Lógica do Menu de Filtros no Cabeçalho
+    if (filtroToggleBtn && filtroDropdownMenu) {
+        filtroToggleBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (navDropdownMenu) navDropdownMenu.classList.remove("ativo");
+            filtroDropdownMenu.classList.toggle("ativo");
+        });
+    }
+
+    // Fecha os menus ao clicar fora
     document.addEventListener("click", (e) => {
         if (navDropdownMenu && !navDropdownMenu.contains(e.target) && !menuToggleBtn?.contains(e.target)) {
             navDropdownMenu.classList.remove("ativo");
+        }
+        if (filtroDropdownMenu && !filtroDropdownMenu.contains(e.target) && !filtroToggleBtn?.contains(e.target)) {
+            filtroDropdownMenu.classList.remove("ativo");
         }
     });
 });
 
 function inicializarSite() {
-    console.log(`${CONFIG.APP_NAME} iniciado com magia.`);
+    console.log(`${CONFIG.APP_NAME} iniciado.`);
 
     inicializarMenu();
+    inicializarBotoes();
     inicializarAno();
-    inicializarBancasParceiros();
+    inicializarProdutosDestaque();
+    inicializarNumismaticaDestaque(); // <-- Adicionado para carregar as moedas e notas na home
     inicializarEventos();
     inicializarDepoimentos();
     inicializarEnvioDepoimento();
+    inicializarCarrosselDiferenciais();
     inicializarToggleDepoimento();
-    inicializarConversaMago();
 }
 
+// -----------------------------------------------------
+// CARROSSEL DE DIFERENCIAIS
+// -----------------------------------------------------
+
+function inicializarCarrosselDiferenciais() {
+    const container = document.querySelector("#carrossel-diferenciais");
+    const containerIndicadores = document.querySelector("#indicadores-diferenciais");
+
+    if (!container || !containerIndicadores) return;
+
+    const cards = container.querySelectorAll(".diferencial-card");
+    containerIndicadores.innerHTML = "";
+
+    cards.forEach((_, index) => {
+        const ponto = document.createElement("div");
+        ponto.classList.add("indicador-ponto");
+        if (index === 0) ponto.classList.add("ativo");
+        containerIndicadores.appendChild(ponto);
+    });
+
+    const pontos = containerIndicadores.querySelectorAll(".indicador-ponto");
+
+    container.addEventListener("scroll", () => {
+        const indexAtivo = Math.round(container.scrollLeft / container.clientWidth);
+
+        pontos.forEach((ponto, index) => {
+            if (index === indexAtivo) {
+                ponto.classList.add("ativo");
+            } else {
+                ponto.classList.remove("ativo");
+            }
+        });
+    });
+}
 
 // -----------------------------------------------------
 // MENU E SONS (COMPATÍVEL COM RAIZ E SUBPASTAS)
 // -----------------------------------------------------
 
 function inicializarMenu() {
+    // Deteta se a página está numa subpasta (ex: /pages/catalogo.html) para ajustar o caminho do som
     const estaEmSubpasta = window.location.pathname.includes('/pages/');
     const caminhoSom = estaEmSubpasta ? '../assets/sons/clique.mp3' : 'assets/sons/clique.mp3';
+
+    // Cria o objeto de áudio com o caminho dinâmico correto
     const somClique = new Audio(caminhoSom);
 
-    const elementosComSom = document.querySelectorAll(".btn-som-3, .btn-som-2, .btn-som-1");
+    // Seleciona TODOS os elementos marcados com .btn-com-som no cabeçalho e no menu suspenso
+    const elementosComSom = document.querySelectorAll(".btn-com-som");
     
     elementosComSom.forEach(elemento => {
         elemento.addEventListener("click", () => {
-            somClique.currentTime = 0;
+            somClique.currentTime = 0; // Reinicia o áudio para cliques rápidos seguidos
             somClique.play().catch(erro => console.log("Áudio aguardando interação:", erro));
         });
     });
 }
+// -----------------------------------------------------
+// BOTÕES
+// -----------------------------------------------------
 
+function inicializarBotoes() {
+    const botoesWhatsApp = document.querySelectorAll(".btn-whatsapp");
+
+    botoesWhatsApp.forEach((botao) => {
+        botao.addEventListener("click", () => {
+            console.log("Botão WhatsApp acionado.");
+        });
+    });
+}
 
 // -----------------------------------------------------
 // ANO DO RODAPÉ
@@ -77,82 +145,127 @@ function inicializarMenu() {
 
 function inicializarAno() {
     const elementoAno = document.querySelector("#ano-atual");
+
     if (elementoAno) {
         elementoAno.textContent = new Date().getFullYear();
     }
 }
 
-// -----------------------------------------------------
-// FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
-// -----------------------------------------------------
 
 // -----------------------------------------------------
-// FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
+// API - PRODUTOS EM DESTAQUE
 // -----------------------------------------------------
 
-function inicializarBancasParceiros() {
-    const container = document.querySelector("#grid-bancas-parceiros");
-    if (!container) return;
+async function inicializarProdutosDestaque() {
+    const container = document.querySelector("#produtos-destaque");
 
-    // Busca as bancas diretamente da API cadastradas pelo Admin/Lojista
-    fetch(`${CONFIG.API_URL}/bancas`)
-        .then(response => {
-            if (!response.ok) throw new Error("Erro ao buscar bancas");
-            return response.json();
-        })
-        .then(bancas => {
-            container.innerHTML = "";
+    if (!container) {
+        console.warn("Container de produtos em destaque não encontrado.");
+        return;
+    }
 
-            if (bancas.length === 0) {
-                container.innerHTML = `<p class="carregando-texto">Nenhuma banca parceira disponível no momento.</p>`;
-                return;
-            }
+    try {
+        const resposta = await fetch(`${CONFIG.API_URL}/produtos`);
 
-            bancas.forEach(banca => {
-                const card = document.createElement("article");
-                card.classList.add("produto-card");
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP: ${resposta.status}`);
+        }
 
-                // Imagem cadastrada ou imagem padrão caso não tenha sido enviada
-                const imagemFachada = banca.logo_path || 'assets/logo/logo.png';
-                const linkPagina = `pages/banca.html?slug=${banca.slug}`;
+        const produtos = await resposta.json();
+        container.innerHTML = "";
 
-                card.innerHTML = `
-                    <div style="position: relative; overflow: hidden;">
-                        <img src="${imagemFachada}" alt="Fachada da ${banca.nome}" onerror="this.src='assets/logo/logo.png'" style="height: 180px; object-fit: cover; width: 100%;">
-                        <span style="position: absolute; bottom: 10px; left: 10px; background: rgba(13, 21, 38, 0.85); color: var(--dourado-claro); font-family: 'Cinzel', serif; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--dourado);">🏛️ Banca Parceira</span>
-                    </div>
-                    <div class="produto-card-body" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
-                        <div>
-                            <h3 style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--azul-profundo); margin-bottom: 4px;">${banca.nome}</h3>
-                            <strong style="font-size: 0.85rem; color: var(--dourado-escuro); display: block; margin-bottom: 10px; font-family: 'IM Fell English SC', serif;">${banca.slogan || ''}</strong>
-                            <p style="font-size: 0.95rem; color: var(--cinza); margin-bottom: 16px; line-height: 1.4;">${banca.descricao || 'Conheça nossos produtos e criações artesanais exclusivas.'}</p>
-                        </div>
-                        <a href="${linkPagina}" class="btn-mago-base btn-tipo-1 btn-som-1" style="padding: 10px 18px; min-height: 42px; font-size: 0.9rem; width: 100%;">
-                            <span>Entrar na Banca</span>
-                        </a>
-                    </div>
-                `;
+        if (produtos.length === 0) {
+            container.innerHTML = "<p>Nenhuma aliança cadastrada no momento.</p>";
+            return;
+        }
 
-                container.appendChild(card);
-            });
-        })
-        .catch(error => {
-            console.error("Erro ao carregar bancas virtuais:", error);
-            container.innerHTML = `<p class="carregando-texto">Não foi possível carregar as bancas parceiras no momento.</p>`;
+        produtos.slice(0, 4).forEach(produto => {
+            const card = document.createElement("article");
+            card.classList.add("produto-card");
+
+            const fotoUrl = produto.imagens && produto.imagens.length > 0 ? produto.imagens[0] : '';
+
+            card.innerHTML = `
+                <img src="${fotoUrl}" alt="${produto.nome}">
+                <div class="produto-card-body">
+                    <h3>${produto.nome}</h3>
+                    <p class="produto-preco">R$ ${produto.preco.toFixed(2).replace(".", ",")}</p>
+                    <a href="pages/produto.html?id=${produto.id}" class="btn-detalhes">Ver detalhes</a>
+                </div>
+            `;
+
+            container.appendChild(card);
         });
+
+        console.log(`${produtos.length} produtos carregados pela API.`);
+
+    } catch (erro) {
+        console.error("Erro ao carregar produtos:", erro);
+        container.innerHTML = "<p>Não foi possível carregar os produtos.</p>";
+    }
 }
 
-// -----------------------------------------------------
-// EVENTOS E FEIRAS PRESENCIAIS
-// -----------------------------------------------------
 
 // -----------------------------------------------------
-// EVENTOS E FEIRAS PRESENCIAIS (DINÂMICO VIA API)
+// API - NUMISMÁTICA EM DESTAQUE (MOEDAS E NOTAS)
 // -----------------------------------------------------
+
+async function inicializarNumismaticaDestaque() {
+    const container = document.querySelector("#numismatica-home");
+
+    if (!container) {
+        return; // Caso a secção não esteja presente na página atual
+    }
+
+    try {
+        const resposta = await fetch(`${CONFIG.API_URL}/numismatica`);
+
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP: ${resposta.status}`);
+        }
+
+        const itens = await resposta.json();
+        container.innerHTML = "";
+
+        if (itens.length === 0) {
+            container.innerHTML = "<p>Nenhuma peça numismática cadastrada no momento.</p>";
+            return;
+        }
+
+        // Mostra até 4 peças em destaque na página inicial
+        itens.slice(0, 4).forEach(item => {
+            const card = document.createElement("article");
+            card.classList.add("produto-card");
+
+            const fotoUrl = item.imagens && item.imagens.length > 0 ? item.imagens[0] : '';
+
+            card.innerHTML = `
+                <img src="${fotoUrl}" alt="${item.nome}">
+                <div class="produto-card-body">
+                    <h3>${item.nome}</h3>
+                    <p class="produto-preco">R$ ${Number(item.preco).toFixed(2).replace(".", ",")}</p>
+                    <a href="pages/item-numismatica.html?id=${item.id}" class="btn-detalhes">Ver detalhes</a>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+        console.log(`${itens.length} peças numismáticas carregadas pela API.`);
+
+    } catch (erro) {
+        console.error("Erro ao carregar numismática:", erro);
+        container.innerHTML = "<p>Não foi possível carregar as moedas e notas antigas.</p>";
+    }
+}
+
 
 async function inicializarEventos() {
     const container = document.querySelector("#eventos-container");
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
 
     try {
         const resposta = await fetch(`${CONFIG.API_URL}/eventos`);
@@ -165,16 +278,17 @@ async function inicializarEventos() {
         container.innerHTML = "";
 
         if (eventos.length === 0) {
-            container.innerHTML = "<p class='carregando-texto'>Nenhum evento agendado no momento. Acompanhe o nosso Instagram!</p>";
+            container.innerHTML = "<p>Nenhum evento agendado no momento. Acompanhe o nosso Instagram para novidades!</p>";
             return;
         }
 
-        // Garante que usa a classe do carrossel/grid padrão do site
-        container.classList.add("eventos-container");
+        container.classList.add("produtos-destaque");
 
+        // Data atual do sistema (ignorando a hora para comparar apenas o dia)
         const hoje = new Date();
         hoje.setHours(0, 0, 0, 0);
 
+        // Lista para armazenar todos os pares de (evento + data individual válida)
         let listaEventosFiltrados = [];
 
         eventos.forEach(evento => {
@@ -183,13 +297,15 @@ async function inicializarEventos() {
                 : [evento.data || ""];
 
             listaDatas.forEach(dataStr => {
+                // Converte a string "DD/MM/AAAA" para o formato Date do JavaScript (AAAA-MM-DD)
                 const partes = dataStr.split('/');
                 if (partes.length === 3) {
                     const dia = parseInt(partes[0], 10);
-                    const mes = parseInt(partes[1], 10) - 1;
+                    const mes = parseInt(partes[1], 10) - 1; // Meses no JS começam em 0
                     const ano = parseInt(partes[2], 10);
                     const dataObj = new Date(ano, mes, dia);
 
+                    // Verifica se a data é válida e se NÃO já passou (>= hoje)
                     if (!isNaN(dataObj.getTime()) && dataObj >= hoje) {
                         listaEventosFiltrados.push({
                             evento: evento,
@@ -201,59 +317,61 @@ async function inicializarEventos() {
             });
         });
 
-        // Ordena cronologicamente pela data mais próxima
+        // Ordena por ordem cronológica (da data mais próxima para a mais distante)
         listaEventosFiltrados.sort((a, b) => a.dataObj - b.dataObj);
 
         if (listaEventosFiltrados.length === 0) {
-            container.innerHTML = "<p class='carregando-texto'>Nenhum evento agendado para as próximas datas.</p>";
+            container.innerHTML = "<p>Nenhum evento agendado para as próximas datas. Acompanhe o nosso Instagram para novidades!</p>";
             return;
         }
 
+        // Renderiza cada card com base na lista filtrada e ordenada
         listaEventosFiltrados.forEach(item => {
             const evento = item.evento;
             const dataIndividual = item.dataStr;
 
             const card = document.createElement("article");
-            card.classList.add("produto-card"); // Utiliza a classe padrão de card do Mago
+            card.classList.add("produto-card");
 
-            const imagemSrc = evento.imagem ? evento.imagem : 'assets/logo/logo.png';
+            const imagemHtml = evento.imagem ? `
+                <div class="produto-card-img">
+                    <img src="${evento.imagem}" alt="${evento.nome}">
+                </div>
+            ` : '';
 
             card.innerHTML = `
-                <div style="position: relative; overflow: hidden;">
-                    <img src="${imagemSrc}" alt="${evento.nome}" style="height: 180px; object-fit: cover; width: 100%;" onerror="this.src='assets/logo/logo.png'">
-                    <span style="position: absolute; top: 10px; right: 10px; background: var(--azul-principal); color: var(--dourado-claro); font-family: 'Cinzel', serif; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--dourado);">📅 ${dataIndividual}</span>
-                </div>
-                <div class="produto-card-body" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
-                    <div>
-                        <h3 style="font-family: 'Cinzel', serif; font-size: 1.15rem; color: var(--azul-profundo); margin-bottom: 8px;">${evento.nome}</h3>
-                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 4px;">📍 ${evento.local}</p>
-                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 16px;">⏰ ${evento.horario || '09h às 18h'}</p>
+                ${imagemHtml}
+                <div class="evento-card-body">
+                    <span class="evento-data-badge">📅 ${dataIndividual}</span>
+                    <h3>${evento.nome}</h3>
+                    <div class="evento-info-extra">
+                        <span>📍 ${evento.local}</span>
+                        <span>⏰ ${evento.horario}</span>
                     </div>
-                    <a href="pages/evento.html?id=${evento.id}" class="btn-mago-base btn-tipo-1 btn-som-1" style="padding: 8px 16px; min-height: 38px; font-size: 0.85rem; width: 100%;">
-                        <span>Ver Detalhes</span>
-                    </a>
+                    <a href="pages/evento.html?id=${evento.id}" class="btn-detalhes">Ver detalhes</a>
                 </div>
             `;
 
             container.appendChild(card);
         });
 
-        console.log(`${listaEventosFiltrados.length} eventos carregados com sucesso.`);
+        console.log(`${listaEventosFiltrados.length} ocorrências de eventos futuros carregadas e ordenadas.`);
 
     } catch (erro) {
         console.error("Erro ao carregar eventos:", erro);
-        container.innerHTML = "<p class='carregando-texto'>Não foi possível carregar os eventos no momento.</p>";
+        container.innerHTML = "<p>Não foi possível carregar os eventos no momento.</p>";
     }
 }
-
-
 // -----------------------------------------------------
-// DEPOIMENTOS PÚBLICOS
+// API - DEPOIMENTOS PÚBLICOS
 // -----------------------------------------------------
 
 async function inicializarDepoimentos() {
     const container = document.querySelector("#lista-depoimentos-publicos");
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
 
     try {
         const resposta = await fetch(`${CONFIG.API_URL}/depoimentos`);
@@ -266,36 +384,28 @@ async function inicializarDepoimentos() {
         container.innerHTML = "";
 
         if (depoimentos.length === 0) {
-            container.innerHTML = "<p class='carregando-texto'>Ainda não há depoimentos publicados. Seja o primeiro a avaliar!</p>";
+            container.innerHTML = "<p>Ainda não há depoimentos publicados. Seja o primeiro a avaliar!</p>";
             return;
         }
 
         depoimentos.forEach(d => {
             const estrelasStr = "⭐".repeat(d.estrelas);
-            
-            // Pega a primeira letra do nome para o Avatar de Perfil Padrão
-            const inicialNome = d.nome ? d.nome.charAt(0).toUpperCase() : '🧙‍♂️';
 
-            // Lógica da Foto de Perfil: Exibe a foto enviada ou gera o Avatar de Perfil com Inicial
-            const fotoPerfilHtml = d.foto_path ? `
-                <div class="depoimento-avatar-wrapper">
-                    <img src="${d.foto_path}" alt="Foto de perfil de ${d.nome}" class="depoimento-avatar-img">
+            const imagemHtml = d.foto_path ? `
+                <div style="flex-shrink: 0;">
+                    <img src="${CONFIG.API_URL}/uploads/${d.foto_path}" alt="Foto do cliente" style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
                 </div>
-            ` : `
-                <div class="depoimento-avatar-wrapper depoimento-avatar-inicial">
-                    <span>${inicialNome}</span>
-                </div>
-            `;
+            ` : '';
 
             const card = document.createElement("div");
             card.classList.add("card-depoimento-publico");
 
             card.innerHTML = `
                 <div style="display: flex; gap: 15px; align-items: flex-start;">
-                    ${fotoPerfilHtml}
+                    ${imagemHtml}
                     <div style="flex-grow: 1; overflow: hidden;">
                         <div style="color: #f39c12; margin-bottom: 4px; font-size: 0.85rem;">${estrelasStr}</div>
-                        <p class="texto-depoimento-limitado" style="color: var(--cinza); font-style: italic; font-size: 0.95rem; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+                        <p class="texto-depoimento-limitado" style="color: var(--cinza); font-style: italic; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; transition: max-height 0.3s ease;">
                             "${d.mensagem}"
                         </p>
                         <button class="btn-expandir-depo" style="background: none; border: none; color: var(--dourado-escuro); font-weight: bold; font-size: 0.8rem; cursor: pointer; padding: 0; margin-bottom: 8px; text-decoration: underline;">
@@ -303,9 +413,9 @@ async function inicializarDepoimentos() {
                         </button>
                     </div>
                 </div>
-                <div style="margin-top: 10px; border-top: 1px solid var(--cinza-claro); padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="font-size: 0.85rem; color: var(--azul-profundo); font-family: 'Cinzel', serif;">${d.nome}</strong>
-                    <small style="color: var(--cinza); font-size: 0.75rem;">${d.cidade}</small>
+                <div style="margin-top: 10px; border-top: 1px solid #f0f0f0; padding-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 0.85rem; color: #222;">${d.nome}</strong>
+                    <small style="color: #777; font-size: 0.75rem;">${d.cidade}</small>
                 </div>
             `;
 
@@ -331,20 +441,25 @@ async function inicializarDepoimentos() {
             container.appendChild(card);
         });
 
+        console.log(`${depoimentos.length} depoimentos carregados pela API.`);
+
     } catch (erro) {
         console.error("Erro ao carregar depoimentos:", erro);
-        container.innerHTML = "<p class='carregando-texto'>Não foi possível carregar os depoimentos no momento.</p>";
+        container.innerHTML = "<p>Não foi possível carregar os depoimentos no momento.</p>";
     }
 }
 
 
 // -----------------------------------------------------
-// API - ENVIO DE NOVO DEPOIMENTO (DINÂMICO)
+// API - ENVIO DE NOVO DEPOIMENTO
 // -----------------------------------------------------
 
 function inicializarEnvioDepoimento() {
     const form = document.querySelector("#form-enviar-depoimento");
-    if (!form) return;
+
+    if (!form) {
+        return;
+    }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -367,17 +482,22 @@ function inicializarEnvioDepoimento() {
             });
 
             if (resposta.ok) {
-                alert("Muito obrigado! O seu depoimento foi enviado com sucesso e será publicado após a nossa verificação no painel.");
+                alert("Muito obrigado! O seu depoimento foi enviado com sucesso e será publicado após a nossa verificação.");
                 form.reset();
             } else {
                 alert("Erro ao enviar o depoimento. Tente novamente.");
             }
         } catch (erro) {
             console.error("Erro:", erro);
-            alert("Não foi possível conectar ao servidor.");
+            alert("Não foi possível conectar ao servidor para enviar o depoimento.");
         }
     });
 }
+
+
+// -----------------------------------------------------
+// TOGGLE DO FORMULÁRIO DE DEPOIMENTO
+// -----------------------------------------------------
 
 function inicializarToggleDepoimento() {
     const btnToggle = document.querySelector("#btn-toggle-depoimento");
@@ -397,81 +517,110 @@ function inicializarToggleDepoimento() {
     });
 }
 
-
 // -----------------------------------------------------
-// LÓGICA DA CONVERSA INTERATIVA COM O MAGO DA SERRA
+// LÓGICA DA CONVERSA INTERATIVA COM O MOISES (7 CENAS)
 // -----------------------------------------------------
 
 const roteiroConversa = [
     {
-        fala: "Saudações, jovem aprendiz! Eu sou o Mago da Serra. Clique em mim para iniciarmos nossa jornada mágica!",
+        fala: "Olá! Sou o Moises, artesão CamarSan. Clique em Mim para conversarmos sobre as nossas alianças artesanais e sobre este Site.",
         botao: "Vamos lá!",
-        imagem: "mascote-img.png"
+        imagem: "mascote-img11.png"
     },
     {
-        fala: "Você conhece o famoso Chapéu Seletor de Hogwarts? Nós temos um colega dele do mundo Mágico, seu nome... que tal descobrirmos Juntos? Responda ao quiz e descubra sua casa presencialmente em nossa banca!",
-        botao: "Quero Ver o SELETOR",
-        imagem: "mascote2-img.png"
+        fala: "Transformamos moedas antigas em joias exclusivas e cheias de história para perpetuar gerações. Clique no MENU acima e veja a Seção NOSSA HISTÓRIA!  ",
+        botao: "Como funciona?",
+        imagem: "mascote-img2.png"
     },
     {
-        fala: "Aqui no nosso reino, a magia do artesanato se une à diversão das feiras. Venha conhecer a arte Mágica de quem Faz com as Próprias Mãos!",
-        botao: "As Bancas Do Reino",
-        imagem: "mascote3-img.png",
+        fala: "Você escolhe o modelo ideal no catálogo, coloca no CARRINHO e clica em FINALIZAR, nós tratamos de todos os detalhes e medidas a partir daí.",
+        botao: "Quero ver os modelos!",
+        imagem: "mascote-img3.png"
+    },
+    {
+        fala: "Estes são os nossos destaques mais queridos. Você pode ver os detalhes e logo abaixo pode ver todos os Modelos do CATÁLOGO!",
+        botao: "Como faço o pedido?",
+        imagem: "mascote-img4.png",
         acao: () => {
             const posicaoOriginal = window.scrollY;
-            document.querySelector('#chapeu-seletor').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('#destaques').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
-                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
+                window.scrollTo({
+                    top: posicaoOriginal,
+                    behavior: 'smooth'
+                });
             }, 1500);
         }
     },
     {
-        fala: "Participamos das melhores feiras e Eventos da região, venha encontrar o Sapo Seletor para ver qual será o teu Destino!",
-        botao: "Veja onde Estaremos!",
-        imagem: "mascote4-img.png",
-        acao: () => {
-            const posicaoOriginal = window.scrollY;
-            document.querySelector('#bancas-parceiros').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
-            }, 1500);
-        }
+        fala: "Combinamos tudo diretamente pelo WhatsApp de forma rápida, segura e totalmente personalizada.",
+        botao: "Quais as entregas?",
+        imagem: "mascote-img5.png"
     },
     {
-        fala: "Siga-nos no Instagram (@omagodaserra) para acompanhar os bastidores, os melhores momentos nas feiras, e participar dos Concursos, agora estamos tentando Daru um nome mágico ao Sapo Seletor, nos Ajude pelo insta.",
-        botao: "Ver redes sociais",
-        imagem: "mascote5-img.png",
-        acao: () => {
-            const posicaoOriginal = window.scrollY;
-            document.querySelector('#eventos').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
-            }, 1500);
-        }
+        fala: "Enviamos via Correios para todo o Brasil, entregamos por motoboy na região ou retirada local.",
+        botao: "Perfeito!",
+        imagem: "mascote-img6.png"
     },
     {
-        fala: "Ficou com alguma dúvida ou deseja dar alguma sujestão? Fale diretamente comigo pelo WhatsApp abaixo. Até breve!",
-        botao: "Falar com o Mago",
-        imagem: "mascote6-img.png",
+        fala: "Veja mais sobre meu trabalho no instagram, sempre posto o passo a passo de como faço a forja, o polimento e demais etapas do processo produtivo.",
+        botao: "Segue lá",
+        imagem: "mascote-img7.png",
         acao: () => {
             const posicaoOriginal = window.scrollY;
             document.querySelector('#redes-sociais').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
-                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
-            }, 1500);
+                window.scrollTo({
+                    top: posicaoOriginal,
+                    behavior: 'smooth'
+                });
+            }, 2000);
         }
     },
     {
-        fala: "Te Mostrei o Meu Reino e como ele Funciona, Explore meu reino mágico o quanto quiser, mas se ainda tiveres dúvidas reinicie a conversa. Espero ter ajudado!" ,
+        fala: "Veja os Eventos que Participamos em Caxias do Sul, estamos nas Melhores Feiras da Cidade!",
+        botao: "Nos Vemos Por Aí!",
+        imagem: "mascote-img8.png",
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('#eventos').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({
+                    top: posicaoOriginal,
+                    behavior: 'smooth'
+                });
+            }, 2000);
+        }
+    },
+    {
+        fala: "Depois de sua experiência com a Camarsan deixe o seu feedback nos depoimentos abaixo, sua opinião é muito importante para nós!",
+        botao: "COMENTEM!",
+        imagem: "mascote-img9.png",
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('.secao-depoimentos-publicos').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({
+                    top: posicaoOriginal,
+                    behavior: 'smooth'
+                });
+            }, 2000);
+        }
+    },
+    {
+        fala: "Ficou com alguma dúvida ou quer encomendar? É só me chamar no WhatsApp abaixo ou me ligar pelo telefone. Até breve!",
         botao: "Reiniciar conversa",
-        imagem: "mascote7-img.png",
+        imagem: "mascote-img10.png",
         final: true,
         acao: () => {
             const posicaoOriginal = window.scrollY;
             document.querySelector('#contato').scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
-                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
-            }, 1500);
+                window.scrollTo({
+                    top: posicaoOriginal,
+                    behavior: 'smooth'
+                });
+            }, 2000);
         }
     }
 ];
@@ -479,26 +628,29 @@ const roteiroConversa = [
 let cenaAtual = 0;
 const caminhoImagens = "assets/mascote/";
 
-function inicializarConversaMago() {
-    const areaMascote = document.getElementById('area-mascote');
-    const imgMascote = document.getElementById('img-mascote');
-    const balaoFala = document.getElementById('balao-fala-mago');
-    const textoFala = document.getElementById('texto-fala');
-    const btnProxima = document.getElementById('btn-proxima-fala');
+const areaMascote = document.getElementById('area-mascote');
+const imgMascote = document.getElementById('img-mascote');
+const balaoFala = document.getElementById('balao-fala-moises');
+const textoFala = document.getElementById('texto-fala');
+const btnProxima = document.getElementById('btn-proxima-fala');
 
-    if (!areaMascote || !imgMascote || !balaoFala || !textoFala || !btnProxima) return;
-
+if (imgMascote) {
     imgMascote.style.transition = "opacity 0.4s ease-in-out, transform 0.4s ease-in-out";
+}
 
+if (areaMascote && imgMascote && balaoFala && textoFala && btnProxima) {
     function atualizarCena() {
         const dadosCena = roteiroConversa[cenaAtual];
         balaoFala.classList.remove('visivel');
 
+        // Transição suave apenas de fade e zoom leve, sem mexer na posição horizontal
         imgMascote.style.opacity = 0;
         imgMascote.style.transform = "scale(0.96)";
 
         setTimeout(() => {
-            // Mantém a imagem base ou alterna caso tenha variações
+            // ADICIONE ESTA LINHA PARA ATUALIZAR A IMAGEM DO MASCOTE:
+            imgMascote.src = caminhoImagens + dadosCena.imagem;
+
             imgMascote.style.opacity = 1;
             imgMascote.style.transform = "scale(1)";
 
@@ -511,7 +663,6 @@ function inicializarConversaMago() {
 
             balaoFala.classList.add('visivel');
         }, 300);
-    }
 
     areaMascote.addEventListener('click', () => {
         if (balaoFala.classList.contains('visivel')) {
@@ -531,22 +682,17 @@ function inicializarConversaMago() {
             cenaAtual++;
             atualizarCena();
         } else {
-            cenaAtual = 0; // Reinicia o ciclo
+            cenaAtual = 0; // Reinicia o ciclo ao chegar ao fim
             atualizarCena();
         }
     }
 }
-
-
-// -----------------------------------------------------
-// WHATSAPP
-// -----------------------------------------------------
-
+// --- FUNÇÃO PARA ABRIR O WHATSAPP COM MENSAGEM GERAL DE CONTATO ---
 function falarPeloWhatsApp(e) {
     if (e) e.preventDefault();
 
-    const numeroWhatsApp = "5554996322787";
-    const mensagem = "Olá, Mago da Serra! Gostaria de tirar algumas dúvidas sobre as pelúcias, feiras e produtos mágicos.";
+    const numeroWhatsApp = "5554996322787"; // O seu número configurado
+    const mensagem = "Olá! Gostaria de conversar com a CamarSan sobre sobre assuntos que vi no site e tirar algumas dúvidas.";
     
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, "_blank");
