@@ -648,9 +648,9 @@ if (areaMascote && imgMascote && balaoFala && textoFala && btnProxima) {
         imgMascote.style.transform = "scale(0.96)";
 
         setTimeout(() => {
-            // ADICIONE ESTA LINHA PARA ATUALIZAR A IMAGEM DO MASCOTE:
             imgMascote.src = caminhoImagens + dadosCena.imagem;
-
+            imgMascote.alt = `Moises CamarSan - Cena ${cenaAtual + 1}`;
+            
             imgMascote.style.opacity = 1;
             imgMascote.style.transform = "scale(1)";
 
@@ -661,8 +661,15 @@ if (areaMascote && imgMascote && balaoFala && textoFala && btnProxima) {
                 dadosCena.acao();
             }
 
+            if (dadosCena.final) {
+                btnProxima.style.display = 'inline-block';
+            } else {
+                btnProxima.style.display = 'inline-block';
+            }
+
             balaoFala.classList.add('visivel');
         }, 300);
+    }
 
     areaMascote.addEventListener('click', () => {
         if (balaoFala.classList.contains('visivel')) {
