@@ -409,14 +409,14 @@ const roteiroConversa = [
         imagem: "mascote-img.png"
     },
     {
-        fala: "Aqui no nosso reino, a magia do artesanato se une à diversão das feiras. Venha conhecer nossas pelúcias exclusivas e varinhas!",
-        botao: "O que mais encontro?",
-        imagem: "mascote-img.png"
+        fala: "Você conhece o famoso Chapéu Seletor de Hogwarts? Nós temos um colega dele do mundo Mágico, seu nome... que tal descobrirmos Juntos? Responda ao quiz e descubra sua casa presencialmente em nossa banca!",
+        botao: "Quero Ver o SELETOR",
+        imagem: "mascote2-img.png"
     },
     {
-        fala: "Temos o famoso Chapéu Seletor de Hogwarts esperando por você. Responda ao quiz e descubra sua casa presencialmente em nossa banca!",
-        botao: "Quero ver o Chapéu!",
-        imagem: "mascote-img.png",
+        fala: "Aqui no nosso reino, a magia do artesanato se une à diversão das feiras. Venha conhecer a arte Mágica de quem Faz com as Próprias Mãos!",
+        botao: "As Bancas Do Reino",
+        imagem: "mascote3-img.png",
         acao: () => {
             const posicaoOriginal = window.scrollY;
             document.querySelector('#chapeu-seletor').scrollIntoView({ behavior: 'smooth' });
@@ -426,9 +426,9 @@ const roteiroConversa = [
         }
     },
     {
-        fala: "Explore também as nossas Bancas Virtuais e conheça os parceiros de pelúcias e alianças artesanais.",
-        botao: "Onde nos encontrar?",
-        imagem: "mascote-img.png",
+        fala: "Participamos das melhores feiras e Eventos da região, venha encontrar o Sapo Seletor para ver qual será o teu Destino!",
+        botao: "Veja onde Estaremos!",
+        imagem: "mascote4-img.png",
         acao: () => {
             const posicaoOriginal = window.scrollY;
             document.querySelector('#bancas-parceiros').scrollIntoView({ behavior: 'smooth' });
@@ -438,9 +438,9 @@ const roteiroConversa = [
         }
     },
     {
-        fala: "Participamos das melhores feiras da região com a Pescaria Divertida e fotos inesquecíveis. Veja onde estaremos!",
+        fala: "Siga-nos no Instagram (@omagodaserra) para acompanhar os bastidores, os melhores momentos nas feiras, e participar dos Concursos, agora estamos tentando Daru um nome mágico ao Sapo Seletor, nos Ajude pelo insta.",
         botao: "Ver redes sociais",
-        imagem: "mascote-img.png",
+        imagem: "mascote5-img.png",
         acao: () => {
             const posicaoOriginal = window.scrollY;
             document.querySelector('#eventos').scrollIntoView({ behavior: 'smooth' });
@@ -450,9 +450,9 @@ const roteiroConversa = [
         }
     },
     {
-        fala: "Siga-nos no Instagram (@omagodaserra) para acompanhar os bastidores e os melhores momentos nas feiras.",
+        fala: "Ficou com alguma dúvida ou deseja dar alguma sujestão? Fale diretamente comigo pelo WhatsApp abaixo. Até breve!",
         botao: "Falar com o Mago",
-        imagem: "mascote-img.png",
+        imagem: "mascote6-img.png",
         acao: () => {
             const posicaoOriginal = window.scrollY;
             document.querySelector('#redes-sociais').scrollIntoView({ behavior: 'smooth' });
@@ -462,9 +462,9 @@ const roteiroConversa = [
         }
     },
     {
-        fala: "Ficou com alguma dúvida ou deseja encomendar uma peça? Fale diretamente comigo pelo WhatsApp abaixo. Até breve!",
+        fala: "Te Mostrei o Meu Reino e como ele Funciona, Explore meu reino mágico o quanto quiser, mas se ainda tiveres dúvidas reinicie a conversa. Espero ter ajudado!" ,
         botao: "Reiniciar conversa",
-        imagem: "mascote-img.png",
+        imagem: "mascote7-img.png",
         final: true,
         acao: () => {
             const posicaoOriginal = window.scrollY;
