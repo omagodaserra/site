@@ -1,0 +1,319 @@
+/* =========================================================
+   BOTÕES, CABEÇALHO, MENU DROPDOWN, REDES SOCIAIS E CONTATO
+   ========================================================= */
+
+.btn-mago-base {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+    padding: 12px 24px !important;
+    min-height: 52px !important;
+    border-radius: 30px !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: var(--transicao) !important;
+    border: 1px solid var(--dourado) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn-mago-icone {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    object-fit: contain !important;
+    display: block !important;
+    flex: 0 0 28px !important;
+}
+
+/* BOTÃO TIPO 1: Ações Principais (Hero, Chapéu Seletor) */
+.btn-tipo-1 {
+    background-color: rgba(27, 42, 71, 0.95) !important;
+    color: var(--dourado-claro) !important;
+    border-color: var(--dourado) !important;
+}
+
+.btn-tipo-1:hover {
+    background-color: rgba(13, 21, 38, 0.98) !important;
+    border-color: var(--dourado-claro) !important;
+    color: var(--branco) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35) !important;
+}
+
+/* BOTÃO TIPO 2: Contato, Redes Sociais e Formulários */
+.btn-tipo-2 {
+    background-color: rgba(13, 21, 38, 0.85) !important;
+    color: var(--branco) !important;
+    border-color: var(--dourado) !important;
+    width: 100% !important;
+    max-width: 380px !important;
+}
+
+.btn-tipo-2:hover {
+    background-color: rgba(212, 175, 55, 0.25) !important;
+    border-color: var(--dourado-claro) !important;
+    color: var(--branco) !important;
+    transform: translateY(-3px) !important;
+}
+
+/* BOTÃO TIPO 3: Cabeçalho e Ações Circulares */
+.btn-tipo-3 {
+    position: relative !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: var(--transicao) !important;
+    box-shadow: none !important;
+}
+
+.btn-tipo-3:hover {
+    background-color: rgba(212, 175, 55, 0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+.btn-tipo-3 .icone-acao-img {
+    width: 36px !important;
+    height: 36px !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+
+/* ---------------------------------------------------------
+   2. CABEÇALHO, LOGO E MENU DROPDOWN
+   --------------------------------------------------------- */
+
+header {
+    background-color: var(--azul-profundo);
+    color: var(--branco);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.nav-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: auto;
+    padding: 12px 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+}
+
+.nav-topo-escala {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.logo-link img {
+    width: 100px;
+    height: auto;
+    display: block;
+}
+
+.menu-acoes-cliente {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.contador-badge {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    background-color: var(--azul-principal) !important;
+    color: var(--dourado-claro) !important;
+    font-size: 0.7rem !important;
+    font-weight: bold !important;
+    padding: 2px 6px !important;
+    border-radius: 50% !important;
+    min-width: 20px !important;
+    text-align: center !important;
+    border: 2px solid var(--dourado) !important;
+}
+
+.nav-dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 4% !important;
+    left: auto !important;
+    background-color: var(--azul-profundo) !important;
+    border: 1px solid var(--dourado) !important;
+    border-radius: 10px !important;
+    box-shadow: var(--sombra) !important;
+    width: 240px !important;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    z-index: 1100 !important;
+}
+
+.nav-dropdown-menu.ativo {
+    max-height: 350px !important;
+    padding: 15px 20px !important;
+}
+
+.nav-dropdown-menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nav-dropdown-menu ul a {
+    color: var(--branco);
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: var(--transicao);
+    display: block;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-dropdown-menu ul a:hover,
+.nav-dropdown-menu ul a.ativo {
+    color: var(--dourado-claro);
+    padding-left: 5px;
+}
+
+
+/* ---------------------------------------------------------
+   3. REDES SOCIAIS E ATENDIMENTO VIA WHATSAPP
+   --------------------------------------------------------- */
+
+#redes-sociais {
+    background-color: var(--azul-profundo);
+    color: var(--branco);
+    text-align: center;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+#redes-sociais h2 {
+    color: var(--dourado-claro) !important;
+}
+
+#redes-sociais h3 {
+    color: var(--branco) !important;
+}
+
+#redes-sociais p {
+    color: #f0f4f8 !important;
+}
+
+.redes-sociais-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+#contato {
+    background: linear-gradient(135deg, var(--azul-principal), var(--azul-profundo));
+    color: var(--branco);
+    text-align: center;
+    border-top: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+#contato h2 {
+    color: var(--dourado-claro) !important;
+}
+
+#contato h3 {
+    color: var(--dourado) !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+#contato p {
+    color: #f0f4f8 !important;
+}
+
+.contato-caixa-botoes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    max-width: 400px;
+    margin: 25px auto 0 auto;
+}
+/* =========================================================
+   RODAPÉ DO SITE - 
+   ============================= */
+
+footer {
+    background-color: #070b14;
+    color: var(--branco);
+    padding: 60px 8% 30px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+footer h2 {
+    color: var(--dourado) !important;
+    text-transform: none !important;
+    font-size: 1.5rem !important;
+    font-family: 'Cinzel', serif !important;
+    margin-bottom: 10px !important;
+}
+
+footer h3 {
+    color: var(--dourado-claro) !important;
+    font-size: 1.1rem !important;
+    font-family: 'Cinzel', serif !important;
+    margin-bottom: 15px !important;
+}
+
+footer p {
+    color: #a0aec0 !important;
+    margin-bottom: 8px !important;
+    font-size: 1rem !important;
+    font-family: 'Cormorant Garamond', serif !important;
+}
+
+footer a {
+    display: block;
+    color: #d1d9e6;
+    margin-bottom: 8px;
+    transition: var(--transicao);
+    font-family: 'Cormorant Garamond', serif;
+}
+
+footer a:hover {
+    color: var(--dourado-claro);
+}
+
+/* Responsividade do Rodapé */
+@media (max-width: 900px) {
+    footer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 420px) {
+    footer {
+        grid-template-columns: 1fr;
+    }
+}

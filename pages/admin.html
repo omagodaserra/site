@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | O Mago da Serra</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/png" href="../assets/icones/favicon.png">
+</head>
+
+<body>
+
+    <header>
+        <nav class="nav-container">
+            <div class="nav-topo-escala">
+                <a href="../index.html" class="logo-link">
+                    <img src="../assets/logo/logo.png" alt="O Mago da Serra">
+                </a>
+            </div>
+            <div class="menu-acoes-cliente">
+                <button id="btn-sair" class="btn-mago-base btn-tipo-3" aria-label="Sair do Painel">
+                    🚪
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="secao-catalogo">
+            <div class="catalogo-cabecalho-texto">
+                <p class="subtitulo-colecao">ÁREA RESTRITA</p>
+                <h1>Painel do Reino (Administração)</h1>
+                <p>Gerencie as bancas parceiras, feiras/eventos e modere os depoimentos do reino.</p>
+            </div>
+
+            <!-- TELA DE LOGIN -->
+            <div id="painel-login-wrapper" class="wrapper-form-depoimento-oculto admin-form-bloco">
+                <h3>Identificação Mágica</h3>
+                <form id="form-login-admin">
+                    <div class="form-grupo-depo">
+                        <label for="senha-ou-chave">Palavra-passe de Admin ou Chave da Banca:</label>
+                        <input type="password" id="senha-ou-chave" placeholder="Digite sua credencial..." required>
+                    </div>
+                    <button type="submit" class="btn-mago-base btn-tipo-1">Acessar Painel</button>
+                </form>
+            </div>
+
+            <!-- CONTEÚDO DO PAINEL RESTRITO -->
+            <div id="painel-conteudo-restrito" style="display: none;">
+
+                <!-- 1. BLOCO ADMIN MASTER -->
+                <div id="bloco-admin-master" style="display: none;">
+
+                    <!-- Gerir Bancas -->
+                    <div class="wrapper-form-depoimento-oculto admin-form-bloco">
+                        <h3>Cadastrar Nova Banca / Lojista</h3>
+                        <form id="form-criar-banca" enctype="multipart/form-data">
+                            <div class="form-grupo-depo">
+                                <label for="banca-nome">Nome da Banca (H1):</label>
+                                <input type="text" id="banca-nome" required>
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="banca-slug">Slug (Identificador URL, ex: dolfin):</label>
+                                <input type="text" id="banca-slug" required>
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="banca-slogan">Slogan / Subtítulo (H2):</label>
+                                <input type="text" id="banca-slogan">
+                            </div>
+                            <!-- O campo de chave manual foi removido, pois o sistema gera automaticamente de forma segura -->
+                            <div class="form-grupo-depo">
+                                <label for="banca-logo">Logotipo da Banca (Opcional):</label>
+                                <input type="file" id="banca-logo" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn-mago-base btn-tipo-1">Criar Banca e Gerar Chave
+                                Automática</button>
+                        </form>
+                    </div>
+
+                    <div class="admin-lista-container" style="margin-bottom: 40px;">
+                        <h3 class="admin-titulo-secao">Bancas Registradas no Reino</h3>
+                        <div id="lista-bancas-admin">
+                            <p class="carregando-texto">A carregar bancas...</p>
+                        </div>
+                    </div>
+
+                    <!-- Gerir Eventos / Feiras -->
+                    <div class="wrapper-form-depoimento-oculto admin-form-bloco">
+                        <h3>Cadastrar Nova Feira / Evento</h3>
+                        <form id="form-evento" enctype="multipart/form-data">
+                            <input type="hidden" id="edit-evento-id">
+                            <div class="form-grupo-depo">
+                                <label for="evento-nome">Nome da Feira / Evento:</label>
+                                <input type="text" id="evento-nome" required>
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="evento-desc">Descrição:</label>
+                                <textarea id="evento-desc" rows="3"></textarea>
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="evento-datas">Datas (Separadas por vírgula, ex: 15/06/2026,
+                                    16/06/2026):</label>
+                                <input type="text" id="evento-datas" required>
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="evento-local">Local / Praça:</label>
+                                <input type="text" id="evento-local" required>
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="evento-horario">Horário:</label>
+                                <input type="text" id="evento-horario" value="09h às 18h">
+                            </div>
+                            <div class="form-grupo-depo">
+                                <label for="evento-imagem">Imagem do Evento:</label>
+                                <input type="file" id="evento-imagem" accept="image/*">
+                            </div>
+                            <button type="submit" id="btn-salvar-evento" class="btn-mago-base btn-tipo-1">Salvar
+                                Evento</button>
+                        </form>
+                    </div>
+
+                    <div class="admin-lista-container" style="margin-bottom: 40px;">
+                        <h3 class="admin-titulo-secao">Eventos Cadastrados (Gerir)</h3>
+                        <div id="lista-eventos-admin">
+                            <p class="carregando-texto">A carregar eventos...</p>
+                        </div>
+                    </div>
+
+                    <!-- Moderação de Depoimentos (Com Fotos de Perfil) -->
+                    <div class="admin-lista-container">
+                        <h3 class="admin-titulo-secao">Moderação de Depoimentos dos Visitantes</h3>
+                        <div id="lista-depoimentos-admin">
+                            <p class="carregando-texto">A carregar depoimentos...</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 2. BLOCO LOJISTA PARCEIRO -->
+
+                <div id="bloco-lojista-parceiro" style="display: none;">
+                    <div class="admin-lista-container">
+                        <h3 class="admin-titulo-secao" id="titulo-painel-lojista">Gestão da Banca</h3>
+                        <p class="carregando-texto" style="margin-bottom: 20px;">Atualize abaixo as informações
+                            comerciais da sua banca.</p>
+
+                        <div class="wrapper-form-depoimento-oculto admin-form-bloco" style="display: block !important;">
+                            <h3>Editar Dados da Minha Banca</h3>
+                            <form id="form-editar-banca-lojista" enctype="multipart/form-data">
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-nome">Nome da Banca:</label>
+                                    <input type="text" id="lojista-nome" required>
+                                </div>
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-slogan">Slogan / Subtítulo:</label>
+                                    <input type="text" id="lojista-slogan">
+                                </div>
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-descricao">Descrição / História da Banca:</label>
+                                    <textarea id="lojista-descricao" rows="3"></textarea>
+                                </div>
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-whatsapp">WhatsApp (Ex: 5554996322787):</label>
+                                    <input type="text" id="lojista-whatsapp">
+                                </div>
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-instagram">Link do Instagram:</label>
+                                    <input type="url" id="lojista-instagram">
+                                </div>
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-localizacao">Link de Localização / Google Maps:</label>
+                                    <input type="url" id="lojista-localizacao">
+                                </div>
+                                <div class="form-grupo-depo">
+                                    <label for="lojista-logo">Alterar Logótipo:</label>
+                                    <input type="file" id="lojista-logo" accept="image/*">
+                                </div>
+                                <button type="submit" class="btn-mago-base btn-tipo-1">Salvar Alterações da
+                                    Banca</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-marca">
+            <h2>O Mago da Serra</h2>
+            <p>Artesanato, Pelúcias & Experiências Mágicas</p>
+        </div>
+        <div class="footer-direitos">
+            <p>© <span id="ano-atual"></span> O Mago da Serra. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../js/admin.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

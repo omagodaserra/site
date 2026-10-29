@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho da Banca | O Mago da Serra</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/png" href="../assets/icones/favicon.png">
+</head>
+
+<body>
+
+    <header>
+        <nav class="nav-container">
+            <div class="nav-topo-escala">
+                <a href="../index.html" class="logo-link">
+                    <img src="../assets/logo/logo.png" alt="O Mago da Serra">
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="secao-catalogo">
+            <div class="catalogo-cabecalho-texto">
+                <p class="subtitulo-colecao" id="carrinho-banca-subtitulo">Carrinho Exclusivo</p>
+                <h1>Carrinho da Banca</h1>
+                <p>Confira os tesouros escolhidos e finalize o pedido diretamente com o lojista via WhatsApp.</p>
+            </div>
+
+            <div id="carrinho-conteudo">
+                <div id="lista-carrinho-banca">
+                    <!-- Preenchido via JS -->
+                </div>
+
+                <div class="carrinho-painel">
+                    <h3>Resumo do Pedido</h3>
+                    <p class="resumo-linha">
+                        <span>Total de itens:</span>
+                        <strong id="resumo-qtd-banca">0</strong>
+                    </p>
+                    <p class="resumo-linha resumo-total-linha">
+                        <span>Valor Total:</span>
+                        <strong id="resumo-total-banca">R$ 0,00</strong>
+                    </p>
+
+                    <button id="btn-finalizar-whatsapp-banca" class="btn-mago-base btn-tipo-1" type="button">
+                        <img src="../assets/icones/whats.png" alt="WhatsApp" class="btn-mago-icone">
+                        <span>Finalizar Pedido com o Lojista</span>
+                    </button>
+
+                    <button id="btn-limpar-carrinho-banca" class="btn-mago-base btn-tipo-2" type="button">
+                        <span>Esvaziar Carrinho</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-direitos">
+            <p>© <span id="ano-atual"></span> O Mago da Serra. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../js/banca-carrinho.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

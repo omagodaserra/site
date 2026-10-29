@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Detalhes das feiras e eventos com O Mago da Serra e Boru.">
+    <title>Detalhes do Evento | O Mago da Serra</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/png" href="../assets/icones/favicon.png">
+</head>
+
+<body>
+
+    <!-- ==================================================
+         CABEÇALHO
+    =================================================== -->
+    <header>
+        <nav class="nav-container">
+            <!-- Esquerda: Logo do Mago da Serra -->
+            <div class="nav-topo-escala">
+                <a href="../index.html" aria-label="Página inicial do Mago da Serra" class="logo-link">
+                    <img src="../assets/logo/logo.png" alt="O Mago da Serra">
+                </a>
+            </div>
+
+            <!-- Direita: Menu, Carrinho e Login -->
+            <div class="menu-acoes-cliente">
+                <button class="btn-mago-base btn-tipo-3 btn-som-3" id="menu-toggle-btn" aria-label="Abrir menu de navegação">
+                    <img src="../assets/icones/menu-icone.png" alt="Menu" class="icone-acao-img">
+                </button>
+
+                <a href="carrinho.html" class="btn-mago-base btn-tipo-3 btn-som-3" aria-label="Carrinho de compras">
+                    <img src="../assets/icones/carrinho.png" alt="Carrinho" class="icone-acao-img">
+                    <span id="contador-carrinho" class="contador-badge">0</span>
+                </a>
+
+                <a href="login.html" class="btn-mago-base btn-tipo-3 btn-som-3" aria-label="Minha Conta">
+                    <img src="../assets/icones/login.png" alt="Login" class="icone-acao-img">
+                </a>
+            </div>
+        </nav>
+
+        <!-- Menu de Navegação Suspenso -->
+        <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+            <ul>
+                <li><a href="../index.html" class="btn-som-3">Início</a></li>
+                <li><a href="../index.html#chapeu-seletor" class="btn-som-3">Chapéu Seletor</a></li>
+                <li><a href="../index.html#bancas-parceiros" class="btn-som-3">Bancas Virtuais</a></li>
+                <li><a href="../index.html#eventos" class="btn-som-3">Feiras & Eventos</a></li>
+                <li><a href="historia.html" class="btn-som-3">O Mago e o Boru</a></li>
+                <li><a href="../index.html#contato" class="btn-som-3">Contato</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- ==================================================
+         DETALHES DO EVENTO
+    =================================================== -->
+    <main>
+        <section id="evento-detalhes-secao" class="secao-catalogo">
+            <div id="evento-container" class="evento-detalhe-wrapper">
+                <p class="carregando-texto">A carregar detalhes da feira e atrações...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================================================
+         RODAPÉ
+    =================================================== -->
+    <footer>
+        <div class="footer-marca">
+            <h2>O Mago da Serra</h2>
+            <p>Artesanato, Pelúcias & Experiências Mágicas</p>
+            <p>Levar encantamento e alegria a cada feira e evento.</p>
+        </div>
+
+        <div class="footer-navegacao">
+            <h3>Navegação</h3>
+            <a href="../index.html">Início</a>
+            <a href="../index.html#chapeu-seletor">Chapéu Seletor</a>
+            <a href="../index.html#bancas-parceiros">Bancas Virtuais</a>
+            <a href="../index.html#eventos">Feiras & Eventos</a>
+            <a href="login.html">Minha Conta</a>
+        </div>
+
+        <div class="footer-atendimento">
+            <h3>Atrações & Parceiros</h3>
+            <p>Dolfin Confecções (Pelúcias)</p>
+            <p>CamarSan (Alianças de Moedas)</p>
+            <p>Pescaria Divertida</p>
+        </div>
+
+        <div class="footer-redes">
+            <h3>Redes Sociais</h3>
+            <a href="https://www.instagram.com/omagodaserra/" target="_blank" rel="noopener noreferrer">Instagram (@omagodaserra)</a>
+        </div>
+
+        <div class="footer-direitos">
+            <p>© <span id="ano-atual"></span> O Mago da Serra. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/evento.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

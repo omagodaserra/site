@@ -1,0 +1,418 @@
+/* =========================================================
+   VARIÁVEIS GLOBAIS & FONTES - O MAGO DA SERRA
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English+SC&display=swap');
+
+:root {
+    /* Paleta Dourada */
+    --dourado: #d4af37;
+    --dourado-claro: #f3e5ab;
+    --dourado-escuro: #997a15;
+    
+    /* Paleta Principal: Azul Místico & Poderoso */
+    --azul-principal: #1b2a47;
+    --azul-profundo: #0d1526;
+    --azul-claro: #3a5b8c;
+    --azul-neons: #4a90e2;
+    
+    /* Tons Neutros e Escuros */
+    --grafite: #1a1a1a;
+    --grafite-claro: #2c2c2c;
+    --creme: #f4f6fa;
+    --branco: #ffffff;
+    --cinza: #555555;
+    --cinza-claro: #e2e8f0;
+    
+    /* Sombras e Animações */
+    --sombra: 0 8px 25px rgba(13, 21, 38, 0.18);
+    --transicao: 0.3s ease;
+}
+/* =========================================================
+   ESTILOS BASE & TIPOGRAFIA - O MAGO DA SERRA
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    background-color: var(--creme);
+    color: var(--grafite);
+    line-height: 1.6;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.2;
+}
+
+section {
+    width: 100%;
+    padding: 80px 8%;
+}
+
+button,
+a,
+.icone-acao-link,
+.menu-toggle-btn {
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* =========================================================
+   HIERARQUIA PADRONIZADA DE TÍTULOS E TEXTOS DAS SEÇÕES
+   ========================================================= */
+
+#bancas-parceiros,
+#destaques,
+#eventos,
+.secao-depoimentos-publicos,
+#chapeu-seletor {
+    text-align: center !important;
+}
+
+#bancas-parceiros,
+#destaques,
+#eventos,
+.secao-depoimentos-publicos {
+    background-color: var(--branco) !important;
+}
+
+/* <h2>: Fontes IM Fell English SC simulando inscrições de grimórios antigos */
+body section h2,
+section h2 {
+    font-family: 'IM Fell English SC', serif !important;
+    color: var(--azul-principal) !important;
+    letter-spacing: 2px !important;
+    font-weight: 400 !important;
+    font-size: 1.25rem !important;
+    margin-bottom: 6px !important;
+}
+
+/* <h3>: Fontes Cinzel imponentes para os títulos das seções */
+body section h3,
+section h3 {
+    font-family: 'Cinzel', serif !important;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem) !important;
+    color: var(--azul-profundo) !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    margin-top: 5px !important;
+    margin-bottom: 12px !important;
+}
+
+/* <p>: Textos descritivos das seções em tom legível */
+body section p:not(.carregando-texto):not(.texto-depoimento-limitado),
+section p:not(.carregando-texto):not(.texto-depoimento-limitado) {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: var(--cinza) !important;
+    font-size: 1.2rem !important;
+    font-weight: 400 !important;
+    max-width: 750px !important;
+    margin: 0 auto 25px auto !important;
+    line-height: 1.5 !important;
+}
+
+/* Texto utilitário para estado de carregamento */
+.carregando-texto {
+    text-align: center;
+    width: 100% !important;
+    color: var(--cinza) !important;
+    font-family: 'Cormorant Garamond', serif !important;
+}
+/* =========================================================
+   CLASSES UTILITÁRIAS PADRONIZADAS (REUTILIZÁVEIS)
+   ========================================================= */
+
+.admin-form-bloco {
+    display: block !important;
+    margin: 0 auto 40px auto !important;
+}
+
+.admin-lista-container {
+    max-width: 900px !important;
+    margin: 0 auto !important;
+}
+
+.admin-titulo-secao {
+    font-family: 'Cinzel', serif !important;
+    color: var(--azul-principal) !important;
+    margin-bottom: 20px !important;
+}
+/* =========================================================
+   REGRAS PADRONIZADAS PARA A PÁGINA DE BANCAS (banca.html)
+   ========================================================= */
+
+.secao-banca-topo {
+    padding-top: 40px !important;
+}
+
+.banca-cabecalho-wrapper {
+    text-align: center !important;
+    margin-bottom: 40px !important;
+}
+
+.banca-logo-container {
+    margin-bottom: 15px !important;
+}
+
+.banca-logo-container img {
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: contain !important;
+    border-radius: 50% !important;
+    border: 2px solid var(--dourado) !important;
+    margin: 0 auto !important;
+}
+
+.banca-titulo-h1 {
+    font-family: 'Cinzel', serif !important;
+    color: var(--dourado-claro) !important;
+}
+
+.banca-slogan-h2 {
+    font-family: 'IM Fell English SC', serif !important;
+    font-size: 1.2rem !important;
+    color: var(--branco) !important;
+    margin-top: 10px !important;
+}
+
+.banca-descricao-p {
+    max-width: 700px !important;
+    margin: 15px auto 0 auto !important;
+    color: #f0f4f8 !important;
+}
+/* =========================================================
+   PÁGINA DETALHES DO EVENTO (evento.html)
+   ========================================================= */
+
+.evento-detalhe-wrapper {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px !important;
+    max-width: 1100px !important;
+    margin: 0 auto !important;
+    align-items: start !important;
+}
+
+.evento-imagem-wrapper {
+    width: 100% !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    border: 2px solid var(--dourado) !important;
+    box-shadow: var(--sombra) !important;
+}
+
+.evento-imagem-destaque {
+    width: 100% !important;
+    height: 400px !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+.evento-informacoes {
+    display: flex !important;
+    flex-direction: column !important;
+    text-align: left !important;
+}
+
+.evento-badge-data {
+    display: inline-block !important;
+    background-color: var(--azul-principal) !important;
+    color: var(--dourado-claro) !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.95rem !important;
+    padding: 6px 14px !important;
+    border-radius: 20px !important;
+    border: 1px solid var(--dourado) !important;
+    margin-bottom: 15px !important;
+    width: fit-content !important;
+}
+
+.evento-titulo-h1 {
+    font-family: 'Cinzel', serif !important;
+    font-size: clamp(1.8rem, 3vw, 2.5rem) !important;
+    color: var(--azul-profundo) !important;
+    margin-bottom: 15px !important;
+}
+
+.evento-descricao-p {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.2rem !important;
+    color: var(--cinza) !important;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
+}
+
+.evento-detalhes-lista {
+    background: var(--branco) !important;
+    padding: 15px 20px !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--cinza-claro) !important;
+    margin-bottom: 20px !important;
+}
+
+.evento-detalhes-lista p {
+    font-size: 1.1rem !important;
+    color: var(--grafite) !important;
+    margin-bottom: 6px !important;
+}
+
+.evento-mapa-container {
+    margin-top: 15px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    border: 1px solid var(--dourado) !important;
+}
+
+.evento-mapa-container iframe {
+    width: 100% !important;
+    height: 250px !important;
+    border: none !important;
+}
+
+.evento-acao-bloco {
+    margin-top: 15px !important;
+}
+
+.evento-contato-bloco {
+    margin-top: 25px !important;
+}
+
+/* Responsividade da Página de Eventos */
+@media (max-width: 800px) {
+    .evento-detalhe-wrapper {
+        grid-template-columns: 1fr !important;
+        gap: 25px !important;
+    }
+
+    .evento-imagem-destaque {
+        height: 280px !important;
+    }
+}
+/* =========================================================
+   AVATAR E FOTO DE PERFIL NOS DEPOIMENTOS
+   ========================================================= */
+
+.depoimento-avatar-wrapper {
+    flex-shrink: 0 !important;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    border: 2px solid var(--dourado) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+}
+
+.depoimento-avatar-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+.depoimento-avatar-inicial {
+    background: linear-gradient(135deg, var(--azul-principal), var(--azul-profundo)) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.depoimento-avatar-inicial span {
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.4rem !important;
+    font-weight: bold !important;
+    color: var(--dourado-claro) !important;
+}
+/* =========================================================
+   REGRAS PARA BANCAS VIRTUAIS E CARRINHOS EXCLUSIVOS
+   ========================================================= */
+
+.banca-contato-grid {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 15px !important;
+    flex-wrap: wrap !important;
+    margin-top: 20px !important;
+    margin-bottom: 25px !important;
+}
+
+.banca-logo-img {
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: contain !important;
+    border-radius: 50% !important;
+    border: 2px solid var(--dourado) !important;
+    margin: 0 auto !important;
+}
+
+.carrinho-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 20px !important;
+    background: var(--branco) !important;
+    padding: 15px !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--cinza-claro) !important;
+    margin-bottom: 15px !important;
+    box-shadow: var(--sombra) !important;
+}
+
+.carrinho-item img {
+    width: 70px !important;
+    height: 70px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--dourado) !important;
+}
+
+.carrinho-item-info {
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 45px !important;
+    text-align: left !important;
+}
+
+.carrinho-painel {
+    background: var(--branco) !important;
+    padding: 25px !important;
+    border-radius: 15px !important;
+    border: 1px solid var(--dourado) !important;
+    box-shadow: var(--sombra) !important;
+    text-align: left !important;
+}
+
+.resumo-linha {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 12px !important;
+    font-size: 1.1rem !important;
+    color: var(--cinza) !important;
+}
+
+.resumo-total-linha {
+    border-top: 1px solid var(--cinza-claro) !important;
+    padding-top: 12px !important;
+    font-size: 1.25rem !important;
+    color: var(--azul-profundo) !important;
+}

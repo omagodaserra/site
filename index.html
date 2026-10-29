@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Responsividade para dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título Principal -->
+    <title>O Mago da Serra | Experiência Mágica, Pelúcias & Feiras</title>
+
+    <!-- Descrição Otimizada -->
+    <meta name="description"
+        content="Entre no mundo mágico do O Mago da Serra e Boru! Faça o teste do Chapéu Seletor, encontre pelúcias artesanais da Dolfin Confecções e alianças de moedas antigas da CamarSan.">
+
+    <!-- Palavras-chave -->
+    <meta name="keywords"
+        content="O Mago da Serra, Boru, Chapéu Seletor, Harry Potter, feiras, artesão, pelúcias artesanais, Dolfin Confecções, alianças de moedas antigas, CamarSan, Caxias do Sul">
+
+    <!-- Autor e Indexação -->
+    <meta name="author" content="O Mago da Serra">
+    <meta name="robots" content="index, follow">
+
+    <!-- Meta Tags Open Graph -->
+    <meta property="og:title" content="O Mago da Serra | Experiência Mágica & Feiras">
+    <meta property="og:description"
+        content="Faça o teste do Chapéu Seletor online e venha descobrir seu resultado presencialmente na feira com o Mago da Serra e Boru!">
+    <meta property="og:image" content="assets/logo/logo.png">
+    <meta property="og:type" content="website">
+
+    <!-- Estilos e Favicon -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="assets/icones/favicon.png">
+</head>
+
+<body>
+
+    <!-- ==================================================
+         CABEÇALHO
+    =================================================== -->
+    <header>
+        <nav class="nav-container">
+
+            <!-- Esquerda: Logo do Mago da Serra -->
+            <div class="nav-topo-escala">
+                <a href="index.html" aria-label="Página inicial do Mago da Serra" class="logo-link">
+                    <img src="assets/logo/logo.png" alt="O Mago da Serra">
+                </a>
+            </div>
+
+            <!-- Direita: Menu, Carrinho e Login (Usando Botão Tipo 3) -->
+            <div class="menu-acoes-cliente">
+                <!-- Botão de Menu -->
+                <button class="btn-mago-base btn-tipo-3 btn-som-3" id="menu-toggle-btn"
+                    aria-label="Abrir menu de navegação">
+                    <img src="assets/icones/menu-icone.png" alt="Menu" class="icone-acao-img">
+                </button>
+
+                <!-- Carrinho de Compras -->
+                <a href="pages/carrinho.html" class="btn-mago-base btn-tipo-3 btn-som-3" aria-label="Carrinho de compras">
+                    <img src="assets/icones/carrinho.png" alt="Carrinho" class="icone-acao-img">
+                    <span id="contador-carrinho" class="contador-badge">0</span>
+                </a>
+
+                <!-- Área de Login / Minha Conta -->
+                <a href="pages/admin.html" class="btn-mago-base btn-tipo-3 btn-som-3" aria-label="Minha Conta">
+                    <img src="assets/icones/login.png" alt="Login" class="icone-acao-img">
+                </a>
+            </div>
+        </nav>
+
+        <!-- Menu de Navegação Suspenso -->
+        <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+            <ul>
+                <li><a href="index.html" class="btn-som-3">Início</a></li>
+                <li><a href="#chapeu-seletor" class="btn-som-3">Chapéu Seletor</a></li>
+                <li><a href="#bancas-parceiros" class="btn-som-3">Bancas Virtuais</a></li>
+                <li><a href="#eventos" class="btn-som-3">Feiras & Eventos</a></li>
+                <li><a href="pages/historia.html" class="btn-som-3">O Mago e o Boru</a></li>
+                <li><a href="#contato" class="btn-som-3">Contato</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- ==================================================
+             HERO + CONVERSA COM O MASCOTE
+        =================================================== -->
+        <section id="hero">
+            <!-- Texto Principal do Hero -->
+            <div class="hero-conteudo">
+                <p>O Mago da Serra & Boru</p>
+                <h1>Onde a magia do artesanato encontra a diversão das feiras.</h1>
+                <p>Interaja com nossos personagens, tire fotos com as varinhas mágicas, divirta-se na Pescaria Divertida e descubra a sua casa no Chapéu Seletor!</p>
+                
+                <!-- Botão Tipo 1 com ícone e som de magia -->
+                <a href="#chapeu-seletor" class="btn-mago-base btn-tipo-1 btn-som-1">
+                    <img src="assets/icones/varinha.png" alt="Varinha Mágica" class="btn-mago-icone">
+                    <span>Fazer o Teste do Chapéu</span>
+                </a>
+            </div>
+
+            <!-- Conversa Interativa com o Mascote (O Mago da Serra / Boru) -->
+            <div class="container-conversa">
+                <div class="mascote-interativo-wrapper">
+                    <div class="mascote-click-area" id="area-mascote">
+                        <img src="assets/mascote/mascote-img.png" alt="O Mago da Serra e Boru" id="img-mascote"
+                            class="mascote-img">
+                    </div>
+                    <div class="balao-fala visivel" id="balao-fala-mago">
+                        <p id="texto-fala">Saudações, jovem aprendiz! Eu sou o Mago da Serra. Clique em mim para iniciarmos nossa jornada mágica!</p>
+                        
+                        <!-- Botão Tipo 1 para avanço da conversa -->
+                        <button id="btn-proxima-fala" class="btn-mago-base btn-tipo-1 btn-som-1">
+                            <span>Vamos lá!</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================
+             ATRAÇÃO PRINCIPAL: CHAPÉU SELETOR
+        =================================================== -->
+        <section id="chapeu-seletor">
+            <h2>ATRAÇÃO EXCLUSIVA</h2>
+            <h3>O Chapéu Seletor de Hogwarts</h3>
+            <p>
+                Responda às perguntas mágicas do quiz abaixo! O Chapéu Seletor analisará seu perfil no site, mas a sua casa só será revelada presencialmente quando você colocar o Chapéu na cabeça em nossa banca!
+            </p>
+
+            <!-- Container reservado para o vídeo em loop do Chapéu conversando e interações em JS -->
+            <div id="container-interacao-chapeu" class="container-interacao-chapeu">
+                <p class="texto-aguardando-chapeu">🧙‍♂️ O Chapéu Seletor está aguardando seus comandos...</p>
+                <small class="legenda-chapeu">(A interação em vídeo/JS será carregada aqui)</small>
+            </div>
+        </section>
+
+        <!-- ==================================================
+             BANCAS VIRTUAIS & EXPOSITORES PARCEIROS
+        =================================================== -->
+        <section id="bancas-parceiros">
+            <h2>FEIRA DE ARTESANATO E PATROCINADORES</h2>
+            <h3>Bancas do Mago & Expositores</h3>
+            <p>
+                Explore os produtos fabricados artesanalmente em nossas bancas ou conheça nossos expositores parceiros.
+            </p>
+
+            <div id="grid-bancas-parceiros" class="produtos-destaque">
+                <p class="carregando-texto">A carregar bancas e expositores...</p>
+            </div>
+        </section>
+
+        <!-- ==================================================
+             EVENTOS E FEIRAS PRESENCIAIS
+        =================================================== -->
+        <section id="eventos">
+            <h2>ONDE ENCONTRAR O MAGO DA SERRA E O BORU</h2>
+            <h3>Próximas Feiras & Eventos</h3>
+            <p>
+                Venha tirar fotos com as varinhas mágicas, jogar na Pescaria Divertida e colocar o Chapéu Seletor na cabeça nas melhores feiras da região!
+            </p>
+
+            <div class="eventos-grid" id="eventos-container">
+                <p class="carregando-texto">A carregar próximos eventos...</p>
+            </div>
+        </section>
+
+        <!-- ==================================================
+             DEPOIMENTOS & AVALIAÇÕES
+        =================================================== -->
+        <section class="secao-depoimentos-publicos">
+            <h2>DEPOIMENTOS DOS VISITANTES</h2>
+            <h3>O que dizem sobre a nossa experiência?</h3>
+            <p>
+                Veja o carinho de quem tirou fotos com as varinhas mágicas, participou da Pescaria Divertida e conheceu o Mago da Serra e o Boru!
+            </p>
+
+            <!-- Lista de depoimentos renderizada via JS -->
+            <div id="lista-depoimentos-publicos">
+                <p class="carregando-texto">A carregar depoimentos...</p>
+            </div>
+
+            <!-- Botão para abrir o formulário de depoimento (Usando Botão Tipo 2) -->
+            <div class="container-form-depoimento">
+                <button id="btn-toggle-depoimento" class="btn-mago-base btn-tipo-2 btn-som-2">
+                    <img src="assets/icones/pena.png" alt="Escrever" class="btn-mago-icone">
+                    <span>Deixe o seu depoimento</span>
+                </button>
+            </div>
+
+            <!-- Formulário de envio de depoimento (Controlado pelo main.js) -->
+            <div id="wrapper-form-depoimento" class="wrapper-form-depoimento-oculto">
+                <h3>Conte como foi sua experiência mágica</h3>
+
+                <form id="form-enviar-depoimento" enctype="multipart/form-data">
+                    <div class="form-grupo-depo">
+                        <label for="depo-nome">Seu Nome:</label>
+                        <input type="text" id="depo-nome" placeholder="Ex: Gabriel Potter" required>
+                    </div>
+
+                    <div class="form-grupo-depo">
+                        <label for="depo-cidade">Cidade / Estado:</label>
+                        <input type="text" id="depo-cidade" placeholder="Ex: Caxias do Sul - RS" required>
+                    </div>
+
+                    <div class="form-grupo-depo">
+                        <label for="depo-estrelas">Sua Nota (1 a 5 estrelas):</label>
+                        <select id="depo-estrelas" required>
+                            <option value="5">⭐⭐⭐⭐⭐ (5/5 - Mágico!)</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5 - Muito divertido)</option>
+                            <option value="3">⭐⭐⭐ (3/5 - Legal)</option>
+                            <option value="2">⭐⭐ (2/5 - Regular)</option>
+                            <option value="1">⭐ (1/5 - Precisa de mais magia)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grupo-depo">
+                        <label for="depo-mensagem">Sua Mensagem / Depoimento:</label>
+                        <textarea id="depo-mensagem" rows="4"
+                            placeholder="Conte sobre sua visita à banca, a pescaria ou o teste do Chapéu..." required></textarea>
+                    </div>
+
+                    <div class="form-grupo-depo">
+                        <label for="depo-foto">Sua foto com a varinha ou na feira (Opcional):</label>
+                        <input type="file" id="depo-foto" accept="image/*">
+                    </div>
+
+                    <button type="submit" class="btn-mago-base btn-tipo-1 btn-som-1">
+                        <img src="assets/icones/enviar.png" alt="Enviar" class="btn-mago-icone">
+                        <span>Enviar Depoimento</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ==================================================
+             REDES SOCIAIS E INSTAGRAM
+        =================================================== -->
+        <section id="redes-sociais">
+            <h2>REDES SOCIAIS</h2>
+            <h3>Siga o Mago da Serra no Instagram</h3>
+            <p>Confira as fotos das pessoas com nossas varinhas, vídeos curtos e bastidores das feiras!</p>
+
+            <div class="redes-sociais-container">
+                <!-- Botão Tipo 2 para o Instagram -->
+                <a href="https://www.instagram.com/omagodaserra/" target="_blank" rel="noopener noreferrer"
+                    aria-label="Instagram @omagodaserra" class="btn-mago-base btn-tipo-2 btn-som-2">
+                    <img src="assets/icones/instagram.png" alt="Instagram" class="btn-mago-icone">
+                    <span>@omagodaserra</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- ==================================================
+             CONTATO & WHATSAPP
+        =================================================== -->
+        <section id="contato">
+            <h2>ATENDIMENTO DIRETO</h2>
+            <h3>Fale com o Mago da Serra</h3>
+            <p>Dúvidas sobre pelúcias personalizadas, encomendas de alianças ou participação em feiras?</p>
+
+            <div class="contato-caixa-botoes">
+                <!-- Botão Tipo 2 para WhatsApp -->
+                <a href="#" onclick="falarPeloWhatsApp(event)" class="btn-mago-base btn-tipo-2 btn-som-2">
+                    <img src="assets/icones/whats.png" alt="WhatsApp" class="btn-mago-icone">
+                    <span>Falar pelo WhatsApp</span>
+                </a>
+
+                <!-- Botão Tipo 2 para Telefone -->
+                <a href="tel:+5554996322787" class="btn-mago-base btn-tipo-2 btn-som-2">
+                    <img src="assets/icones/fone.png" alt="Telefone" class="btn-mago-icone">
+                    <span>(54) 99632-2787</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================================================
+         RODAPÉ
+    =================================================== -->
+    <footer>
+        <div class="footer-marca">
+            <h2>O Mago da Serra</h2>
+            <p>Artesanato, Pelúcias & Experiências Mágicas</p>
+            <p>Levar encantamento e alegria a cada feira e evento.</p>
+        </div>
+
+        <div class="footer-navegacao">
+            <h3>Navegação</h3>
+            <a href="index.html">Início</a>
+            <a href="#chapeu-seletor">Chapéu Seletor</a>
+            <a href="#bancas-parceiros">Bancas Virtuais</a>
+            <a href="#eventos">Feiras & Eventos</a>
+            <a href="pages/login.html">Minha Conta</a>
+        </div>
+
+        <div class="footer-atendimento">
+            <h3>Atrações & Parceiros</h3>
+            <p>Dolfin Confecções (Pelúcias)</p>
+            <p>CamarSan (Alianças de Moedas)</p>
+            <p>Pescaria Divertida</p>
+            <p>Expositores Parceiros</p>
+        </div>
+
+        <div class="footer-redes">
+            <h3>Redes Sociais</h3>
+            <a href="https://www.instagram.com/omagodaserra/" target="_blank" rel="noopener noreferrer">Instagram (@omagodaserra)</a>
+        </div>
+
+        <div class="footer-direitos">
+            <p>© <span id="ano-atual"></span> O Mago da Serra. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Script Principal JavaScript -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>

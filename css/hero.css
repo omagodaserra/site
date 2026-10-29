@@ -1,0 +1,237 @@
+/* =========================================================
+   HERO MÍSTICO, MASCOTE INTERATIVO & CHAPÉU SELETOR
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. HERO COM DEGRADÊ MÍSTICO & MASCOTE INTERATIVO
+   --------------------------------------------------------- */
+
+#hero {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 24px !important;
+    min-height: auto !important;
+    text-align: center !important;
+    background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-principal) 50%, #080f1e 100%) !important;
+    padding: clamp(42px, 6vw, 76px) 5% 28px !important;
+    color: var(--branco);
+    position: relative;
+    overflow: hidden;
+}
+
+#hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.hero-conteudo {
+    width: 100% !important;
+    max-width: 850px !important;
+    margin: 0 auto !important;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-conteudo > p:first-child {
+    font-family: 'IM Fell English SC', serif;
+    color: var(--dourado-claro);
+    letter-spacing: 3px;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+/* H1 do Hero em tonalidade dourada mística com brilho */
+.hero-conteudo h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    margin-bottom: 25px;
+    color: var(--dourado-claro) !important;
+    text-shadow: 0 4px 20px rgba(212, 175, 55, 0.35), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+#hero .hero-conteudo > p {
+    max-width: 650px;
+    color: #f0f4f8 !important;
+    margin: 0 auto 30px auto;
+    font-size: 1.3rem !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.container-conversa {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: transparent !important;
+    position: relative;
+    z-index: 2;
+}
+
+.mascote-interativo-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+    gap: 0 !important;
+}
+
+.mascote-click-area {
+    position: relative;
+    z-index: 3;
+    cursor: pointer;
+    flex: 0 0 220px !important;
+    width: 220px !important;
+    height: 310px !important;
+    margin-right: -18px !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    -webkit-tap-highlight-color: transparent !important;
+    user-select: none !important;
+}
+
+.mascote-img {
+    width: auto !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: bottom center !important;
+    display: block !important;
+    filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.6));
+    transition: transform 0.3s ease;
+}
+
+.mascote-click-area:hover .mascote-img {
+    transform: scale(1.03);
+}
+
+.balao-fala {
+    position: relative;
+    z-index: 2;
+    background-color: var(--branco);
+    color: var(--grafite);
+    padding: 22px 26px 22px 38px !important;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    width: min(430px, calc(100vw - 250px)) !important;
+    min-width: 260px !important;
+    max-width: 430px !important;
+    flex: 0 1 430px !important;
+    border: 2px solid var(--dourado);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    text-align: left;
+}
+
+.balao-fala.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.balao-fala p {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.15rem !important;
+    color: var(--grafite) !important;
+    margin-bottom: 18px !important;
+    line-height: 1.45 !important;
+    font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   2. SEÇÃO EXCLUSIVA DO CHAPÉU SELETOR DE HOGWARTS
+   --------------------------------------------------------- */
+
+#chapeu-seletor {
+    background: linear-gradient(135deg, var(--azul-profundo), var(--azul-principal)) !important;
+    color: var(--branco) !important;
+    border-top: 2px solid var(--dourado);
+    border-bottom: 2px solid var(--dourado);
+}
+
+#chapeu-seletor h2 {
+    color: var(--dourado-claro) !important;
+}
+
+#chapeu-seletor h3 {
+    color: var(--dourado) !important;
+}
+
+#chapeu-seletor p {
+    color: #f0f4f8 !important;
+}
+
+.container-interacao-chapeu {
+    max-width: 800px;
+    margin: 30px auto 0 auto;
+    padding: 40px 20px;
+    border: 2px dashed var(--dourado);
+    border-radius: 20px;
+    background: rgba(13, 21, 38, 0.5);
+}
+
+.texto-aguardando-chapeu {
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.2rem !important;
+    color: var(--dourado-claro) !important;
+    margin-bottom: 5px !important;
+}
+
+.legenda-chapeu {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: #a0aec0 !important;
+    display: block;
+    margin-top: 10px;
+}
+
+
+/* ---------------------------------------------------------
+   3. RESPONSIVIDADE ESPECÍFICA DO HERO E MASCOTE
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    #hero {
+        padding: 42px 5% 24px !important;
+        gap: 18px !important;
+    }
+
+    .mascote-click-area {
+        width: 125px !important;
+        height: 185px !important;
+        flex: 0 0 125px !important;
+        margin-right: -16px !important;
+    }
+
+    .balao-fala {
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        flex: 1 1 auto !important;
+        padding: 16px 14px 16px 25px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .mascote-click-area {
+        width: 105px !important;
+        height: 160px !important;
+        flex-basis: 105px !important;
+        margin-right: -12px !important;
+    }
+}

@@ -1,0 +1,169 @@
+/* =========================================================
+   BANCAS VIRTUAIS, EXPOSITORES, EVENTOS & DEPOIMENTOS
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. BANCAS VIRTUAIS & CARROSSÉIS (EXPOSITORES E EVENTOS)
+   --------------------------------------------------------- */
+
+.produtos-destaque,
+.eventos-container,
+.produtos-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+    max-width: 1080px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 10px 4px 22px !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+}
+
+.produtos-destaque::-webkit-scrollbar,
+.eventos-container::-webkit-scrollbar {
+    display: none;
+}
+
+.produtos-destaque > *,
+.eventos-container > * {
+    box-sizing: border-box !important;
+    flex: 0 0 230px !important;
+    width: 230px !important;
+    min-width: 230px !important;
+    max-width: 230px !important;
+    scroll-snap-align: start !important;
+}
+
+.produto-card,
+.evento-card {
+    background-color: var(--branco) !important;
+    border: 1px solid var(--cinza-claro) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: var(--sombra) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    text-align: left !important;
+    transition: var(--transicao) !important;
+}
+
+.produto-card:hover,
+.evento-card:hover {
+    transform: translateY(-8px) !important;
+    border-color: var(--dourado) !important;
+}
+
+.carregando-texto {
+    text-align: center;
+    width: 100% !important;
+    color: var(--cinza) !important;
+    font-family: 'Cormorant Garamond', serif !important;
+}
+
+
+/* ---------------------------------------------------------
+   2. DEPOIMENTOS & FORMULÁRIO INTERATIVO
+   --------------------------------------------------------- */
+
+.secao-depoimentos-publicos {
+    background-color: var(--branco) !important;
+    text-align: center !important;
+}
+
+#lista-depoimentos-publicos {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 900px !important;
+    margin: 0 auto 28px !important;
+    text-align: left !important;
+}
+
+.card-depoimento-publico {
+    padding: 20px !important;
+    background: var(--branco) !important;
+    border: 1px solid var(--cinza-claro) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--sombra) !important;
+}
+
+.container-form-depoimento {
+    text-align: center;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+.wrapper-form-depoimento-oculto {
+    display: none;
+    margin-top: 25px;
+    background: var(--creme);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--dourado);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper-form-depoimento-oculto h3 {
+    font-family: 'Cinzel', serif !important;
+    color: var(--azul-principal) !important;
+    margin-bottom: 20px !important;
+    font-size: 1.5rem !important;
+}
+
+.form-grupo-depo {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.form-grupo-depo label {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    color: var(--grafite);
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.form-grupo-depo input,
+.form-grupo-depo select,
+.form-grupo-depo textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    outline: none;
+}
+
+.form-grupo-depo input:focus,
+.form-grupo-depo select:focus,
+.form-grupo-depo textarea:focus {
+    border-color: var(--dourado);
+}
+
+
+/* ---------------------------------------------------------
+   3. RESPONSIVIDADE DOS CARROSSÉIS
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    .produtos-destaque > *,
+    .eventos-container > * {
+        flex-basis: 48% !important;
+        width: 48% !important;
+        min-width: 48% !important;
+        max-width: 48% !important;
+    }
+}

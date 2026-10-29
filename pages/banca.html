@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banca Parceira | O Mago da Serra</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/png" href="../assets/icones/favicon.png">
+</head>
+
+<body>
+
+    <!-- CABEÇALHO PADRÃO DO MAGO -->
+    <header>
+        <nav class="nav-container">
+            <div class="nav-topo-escala">
+                <a href="../index.html" class="logo-link">
+                    <img src="../assets/logo/logo.png" alt="O Mago da Serra">
+                </a>
+            </div>
+            <div class="menu-acoes-cliente">
+                <!-- Carrinho exclusivo da banca -->
+                <a href="banca-carrinho.html" id="link-carrinho-banca" class="btn-mago-base btn-tipo-3">
+                    <img src="../assets/icones/carrinho.png" alt="Carrinho" class="icone-acao-img">
+                    <span id="contador-carrinho-banca" class="contador-badge">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="secao-catalogo secao-banca-topo">
+            <div class="catalogo-cabecalho-texto banca-cabecalho-wrapper">
+                <div id="banca-cabecalho-logo" class="banca-logo-container">
+                    <!-- Carregado via JS -->
+                </div>
+                <h1 id="banca-nome-h1" class="banca-titulo-h1">A Carregar Banca...</h1>
+                <h2 id="banca-slogan-h2" class="banca-slogan-h2"></h2>
+                <p id="banca-descricao-p" class="banca-descricao-p"></p>
+
+                <!-- BOTÕES DINÂMICOS DE CONTATO DA BANCA (WHATSAPP, INSTAGRAM, LOCALIZAÇÃO) -->
+                <div id="banca-botoes-contato" class="banca-contato-grid">
+                    <!-- Gerado dinamicamente via JS -->
+                </div>
+            </div>
+
+            <!-- CATÁLOGO DE PRODUTOS DAQUELA BANCA -->
+            <div id="lista-catalogo-banca" class="produtos-grid">
+                <p class="carregando-texto">A carregar o catálogo de tesouros...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-direitos">
+            <p>© <span id="ano-atual"></span> O Mago da Serra. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../js/banca.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

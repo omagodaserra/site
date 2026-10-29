@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Tesouro | O Mago da Serra</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/png" href="../assets/icones/favicon.png">
+</head>
+
+<body>
+
+    <!-- ==================================================
+         CABEÇALHO
+    =================================================== -->
+    <header>
+        <nav class="nav-container">
+            <div class="nav-topo-escala">
+                <a href="../index.html" class="logo-link">
+                    <img src="../assets/logo/logo.png" alt="O Mago da Serra">
+                </a>
+            </div>
+            <div class="menu-acoes-cliente">
+                <button class="btn-mago-base btn-tipo-3 btn-som-3" id="menu-toggle-btn" aria-label="Abrir menu">
+                    <img src="../assets/icones/menu-icone.png" alt="Menu" class="icone-acao-img">
+                </button>
+                <a href="carrinho.html" class="btn-mago-base btn-tipo-3 btn-som-3" aria-label="Carrinho">
+                    <img src="../assets/icones/carrinho.png" alt="Carrinho" class="icone-acao-img">
+                    <span id="contador-carrinho" class="contador-badge">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ==================================================
+         CONTEÚDO PRINCIPAL (DETALHES DO PRODUTO DA BANCA)
+    =================================================== -->
+    <main>
+        <section id="produto" class="secao-catalogo">
+            <div id="produto-container" class="produto-container">
+                <p class="carregando-texto">A carregar detalhes do tesouro...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================================================
+         RODAPÉ
+    =================================================== -->
+    <footer>
+        <div class="footer-marca">
+            <h2>O Mago da Serra</h2>
+            <p>Artesanato, Pelúcias & Experiências Mágicas</p>
+        </div>
+        <div class="footer-direitos">
+            <p>© <span id="ano-atual"></span> O Mago da Serra. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Script específico -->
+    <script src="../js/banca-produto.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>
