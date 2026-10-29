@@ -86,6 +86,10 @@ function inicializarAno() {
 // FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
 // -----------------------------------------------------
 
+// -----------------------------------------------------
+// FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
+// -----------------------------------------------------
+
 function inicializarBancasParceiros() {
     const container = document.querySelector("#grid-bancas-parceiros");
     if (!container) return;
@@ -137,7 +141,6 @@ function inicializarBancasParceiros() {
             container.innerHTML = `<p class="carregando-texto">Não foi possível carregar as bancas parceiras no momento.</p>`;
         });
 }
-
 
 // -----------------------------------------------------
 // EVENTOS E FEIRAS PRESENCIAIS (DINÂMICO VIA API)
@@ -207,7 +210,7 @@ async function inicializarEventos() {
             const dataIndividual = item.dataStr;
 
             const card = document.createElement("article");
-            card.classList.add("produto-card");
+            card.classList.add("produto-card"); // Utiliza a classe padrão de card do Mago
 
             const imagemSrc = evento.imagem ? evento.imagem : 'assets/logo/logo.png';
 
@@ -230,6 +233,8 @@ async function inicializarEventos() {
 
             container.appendChild(card);
         });
+
+        console.log(`${listaEventosFiltrados.length} eventos carregados com sucesso.`);
 
     } catch (erro) {
         console.error("Erro ao carregar eventos:", erro);
@@ -263,8 +268,11 @@ async function inicializarDepoimentos() {
 
         depoimentos.forEach(d => {
             const estrelasStr = "⭐".repeat(d.estrelas);
+            
+            // Pega a primeira letra do nome para o Avatar de Perfil Padrão
             const inicialNome = d.nome ? d.nome.charAt(0).toUpperCase() : '🧙‍♂️';
 
+            // Lógica da Foto de Perfil: Exibe a foto enviada ou gera o Avatar de Perfil com Inicial
             const fotoPerfilHtml = d.foto_path ? `
                 <div class="depoimento-avatar-wrapper">
                     <img src="${d.foto_path}" alt="Foto de perfil de ${d.nome}" class="depoimento-avatar-img">
@@ -486,9 +494,9 @@ function inicializarConversaMago() {
         imgMascote.style.transform = "scale(0.96)";
 
         setTimeout(() => {
-            // Atualiza dinamicamente a imagem do mascote conforme o roteiro
+            // Mantém a imagem base ou alterna caso tenha variações
             imgMascote.src = caminhoImagens + dadosCena.imagem;
-
+            
             imgMascote.style.opacity = 1;
             imgMascote.style.transform = "scale(1)";
 
@@ -496,7 +504,7 @@ function inicializarConversaMago() {
             btnProxima.textContent = dadosCena.botao;
 
             if (dadosCena.acao) {
-                dadosCenn.acao ? dadosCena.acao() : null;
+                dadosCena.acao();
             }
 
             balaoFala.classList.add('visivel');
