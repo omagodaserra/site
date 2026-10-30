@@ -184,9 +184,9 @@
                         <!-- Formulário para Cadastrar Produto da Banca -->
                         <div class="wrapper-form-depoimento-oculto admin-form-bloco"
                             style="display: block !important; margin-top: 30px;">
-                            <h3 id="titulo-form-prod-lojista">Cadastrar Novo Produto na Banca</h3>
+                            <h3 id="titulo-form-produto-lojista">Cadastrar Novo Produto na Banca</h3>
                             <form id="form-criar-produto-lojista" enctype="multipart/form-data">
-                                <input type="hidden" id="edit-prod-lojista-id" value="">
+                                <input type="hidden" id="edit-prod-id" value="">
 
                                 <div class="form-grupo-depo">
                                     <label for="prod-nome">Nome do Produto:</label>
@@ -206,16 +206,14 @@
                                     <input type="text" id="prod-disponibilidade" value="Disponível na banca">
                                 </div>
                                 <div class="form-grupo-depo">
-                                    <label for="prod-imagem" class="label-arquivo">Selecione as fotos do produto (pode
-                                        escolher várias):</label>
-                                    <input type="file" id="prod-imagem" accept="image/*" multiple>
+                                    <label for="prod-imagens" class="label-arquivo">Selecione as fotos do produto (pode escolher várias):</label>
+                                    <input type="file" id="prod-imagens" accept="image/*" multiple>
                                 </div>
 
                                 <button type="submit" id="btn-salvar-prod-lojista"
-                                    class="btn-mago-base btn-tipo-1">Adicionar Produto</button>
-                                <button type="button" id="btn-cancelar-edicao-prod-lojista"
-                                    class="btn-mago-base btn-tipo-2" style="display: none; margin-top: 10px;">Cancelar
-                                    Edição</button>
+                                    class="btn-mago-base btn-tipo-1"><span>Adicionar Produto</span></button>
+                                <button type="button" id="btn-cancelar-prod-lojista"
+                                    class="btn-mago-base btn-tipo-2" style="display: none; margin-top: 10px;"><span>Cancelar Edição</span></button>
                             </form>
                         </div>
 
