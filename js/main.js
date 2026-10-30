@@ -86,10 +86,6 @@ function inicializarAno() {
 // FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
 // -----------------------------------------------------
 
-// -----------------------------------------------------
-// FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
-// -----------------------------------------------------
-
 function inicializarBancasParceiros() {
     const container = document.querySelector("#grid-bancas-parceiros");
     if (!container) return;
@@ -120,7 +116,7 @@ function inicializarBancasParceiros() {
                     <div style="position: relative; overflow: hidden;">
                         <img src="${imagemFachada}" alt="Fachada da ${banca.nome}" onerror="this.src='assets/logo/logo.png'" style="height: 180px; object-fit: cover; width: 100%;">
                         <a href="${linkPagina}" class="btn-mago-base btn-tipo-1 btn-som-1" style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 85%; padding: 8px 12px; min-height: 38px; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
-                            <span>Entrar na Banca</span>
+                            <span>ENTRAR</span>
                         </a>
                     </div>
                     <div class="produto-card-body" style="padding: 14px; display: flex; flex-direction: column; justify-content: flex-start; flex-grow: 1;">
