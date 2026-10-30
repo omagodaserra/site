@@ -2,10 +2,6 @@
    BANCAS VIRTUAIS, EXPOSITORES, EVENTOS & DEPOIMENTOS
    ========================================================= */
 
-/* ---------------------------------------------------------
-   1. BANCAS VIRTUAIS & CARROSSÉIS (EXPOSITORES E EVENTOS)
-   --------------------------------------------------------- */
-
 .produtos-destaque,
 .eventos-container,
 .produtos-grid {
@@ -32,10 +28,10 @@
 .produtos-destaque > *,
 .eventos-container > * {
     box-sizing: border-box !important;
-    flex: 0 0 230px !important;
-    width: 230px !important;
-    min-width: 230px !important;
-    max-width: 230px !important;
+    flex: 0 0 240px !important;
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
     scroll-snap-align: start !important;
 }
 
@@ -52,6 +48,13 @@
     transition: var(--transicao) !important;
 }
 
+/* Regra para garantir que o nome da banca nunca quebre linha e use reticências */
+.produto-card h3 {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
 .produto-card:hover,
 .evento-card:hover {
     transform: translateY(-8px) !important;
@@ -64,7 +67,6 @@
     color: var(--cinza) !important;
     font-family: 'Cormorant Garamond', serif !important;
 }
-
 
 /* ---------------------------------------------------------
    2. DEPOIMENTOS & FORMULÁRIO INTERATIVO
