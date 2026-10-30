@@ -119,17 +119,13 @@ function inicializarBancasParceiros() {
                 card.innerHTML = `
                     <div style="position: relative; overflow: hidden;">
                         <img src="${imagemFachada}" alt="Fachada da ${banca.nome}" onerror="this.src='assets/logo/logo.png'" style="height: 180px; object-fit: cover; width: 100%;">
-                        <span style="position: absolute; bottom: 10px; left: 10px; background: rgba(13, 21, 38, 0.85); color: var(--dourado-claro); font-family: 'Cinzel', serif; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--dourado);">🏛️ Banca Parceira</span>
-                    </div>
-                    <div class="produto-card-body" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
-                        <div>
-                            <h3 style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--azul-profundo); margin-bottom: 4px;">${banca.nome}</h3>
-                            <strong style="font-size: 0.85rem; color: var(--dourado-escuro); display: block; margin-bottom: 10px; font-family: 'IM Fell English SC', serif;">${banca.slogan || ''}</strong>
-                            <p style="font-size: 0.95rem; color: var(--cinza); margin-bottom: 16px; line-height: 1.4;">${banca.descricao || 'Conheça nossos produtos e criações artesanais exclusivas.'}</p>
-                        </div>
-                        <a href="${linkPagina}" class="btn-mago-base btn-tipo-1 btn-som-1" style="padding: 10px 18px; min-height: 42px; font-size: 0.9rem; width: 100%;">
+                        <a href="${linkPagina}" class="btn-mago-base btn-tipo-1 btn-som-1" style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 85%; padding: 8px 12px; min-height: 38px; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
                             <span>Entrar na Banca</span>
                         </a>
+                    </div>
+                    <div class="produto-card-body" style="padding: 14px; display: flex; flex-direction: column; justify-content: flex-start; flex-grow: 1;">
+                        <h3 style="font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--azul-profundo); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${banca.nome}">${banca.nome}</h3>
+                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${banca.slogan || banca.descricao || 'Criações artesanais exclusivas.'}</p>
                     </div>
                 `;
 
