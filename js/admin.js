@@ -5,12 +5,18 @@
 const API_URL = "https://omagodaserra.pythonanywhere.com";
 const SENHA_ADMIN_MASTER = "mago1234";
 
+// Variáveis globais do painel
+let chaveLojistaAtual = "";
+let slugBancaAtualLojista = "";
+let arquivosProdutosLojistaSelecionados = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     configurarAnoRodape();
     configurarLogin();
     configurarFormularioBanca();
     configurarFormularioEvento();
     configurarBotaoSair();
+    inicializarPreviewImagensLojista();
 });
 
 function configurarAnoRodape() {
@@ -49,8 +55,23 @@ function verificarChaveLojista(chave) {
             const bancaEncontrada = bancas.find(b => b.chave_acesso === chave);
 
             if (bancaEncontrada) {
+                chaveLojistaAtual = chave;
+                slugBancaAtualLojista = bancaEncontrada.slug;
+
                 document.getElementById("bloco-lojista-parceiro").style.display = "block";
                 document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${bancaEncontrada.nome}`;
+
+                // Preenche o formulário do lojista com os dados atuais da banca dele
+                document.getElementById("lojista-nome").value = bancaEncontrada.nome || "";
+                document.getElementById("lojista-slogan").value = bancaEncontrada.slogan || "";
+                document.getElementById("lojista-descricao").value = bancaEncontrada.descricao || "";
+                document.getElementById("lojista-whatsapp").value = bancaEncontrada.whatsapp || "";
+                document.getElementById("lojista-instagram").value = bancaEncontrada.instagram || "";
+                document.getElementById("lojista-localizacao").value = bancaEncontrada.localizacao || "";
+
+                configurarFormularioLojista();
+                carregarProdutosLojista(bancaEncontrada.slug);
+                configurarFormularioProdutoLojista();
             } else {
                 alert("Credencial inválida! Verifique sua senha de administrador ou chave de acesso.");
                 window.location.reload();
@@ -73,7 +94,7 @@ function configurarBotaoSair() {
 }
 
 // -----------------------------------------------------
-// GESTÃO DE BANCAS (COM WHATSAPP, INSTAGRAM E LOCALIZAÇÃO)
+// GESTÃO DE BANCAS (ADMIN MASTER)
 // -----------------------------------------------------
 function carregarBancasAdmin() {
     const container = document.getElementById("lista-bancas-admin");
@@ -145,40 +166,6 @@ window.excluirBanca = function(id) {
             carregarBancasAdmin();
         });
 }
-// Variável global para armazenar temporariamente a chave do lojista logado
-let chaveLojistaAtual = "";
-
-function verificarChaveLojista(chave) {
-    fetch(`${API_URL}/bancas`)
-        .then(res => res.json())
-        .then(bancas => {
-            const bancaEncontrada = bancas.find(b => b.chave_acesso === chave);
-
-            if (bancaEncontrada) {
-                chaveLojistaAtual = chave;
-                document.getElementById("bloco-lojista-parceiro").style.display = "block";
-                document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${bancaEncontrada.nome}`;
-
-                // Preenche o formulário do lojista com os dados atuais da banca dele
-                document.getElementById("lojista-nome").value = bancaEncontrada.nome || "";
-                document.getElementById("lojista-slogan").value = bancaEncontrada.slogan || "";
-                document.getElementById("lojista-descricao").value = bancaEncontrada.descricao || "";
-                document.getElementById("lojista-whatsapp").value = bancaEncontrada.whatsapp || "";
-                document.getElementById("lojista-instagram").value = bancaEncontrada.instagram || "";
-                document.getElementById("lojista-localizacao").value = bancaEncontrada.localizacao || "";
-
-                configurarFormularioLojista();
-            } else {
-                alert("Credencial inválida! Verifique sua senha de administrador ou chave de acesso.");
-                window.location.reload();
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao validar chave:", err);
-            alert("Erro de conexão com o reino.");
-            window.location.reload();
-        });
-}
 
 function configurarFormularioLojista() {
     const form = document.getElementById("form-editar-banca-lojista");
@@ -214,8 +201,234 @@ function configurarFormularioLojista() {
         });
     };
 }
+
+
 // -----------------------------------------------------
-// GESTÃO DE EVENTOS / FEIRAS
+// GESTÃO DE PRODUTOS DA BANCA PELO LOJISTA (COM CAPA E MÚLTIPLAS FOTOS)
+// -----------------------------------------------------
+
+function inicializarPreviewImagensLojista() {
+    const inputImg = document.getElementById('prod-imagens');
+    if (!inputImg) return;
+
+    const containerPreview = document.createElement('div');
+    containerPreview.id = 'preview-imagens-lojista';
+    containerPreview.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; width: 100%;';
+    inputImg.parentNode.insertBefore(containerPreview, inputImg.nextSibling);
+
+    inputImg.addEventListener('change', function (e) {
+        arquivosProdutosLojistaSelecionados = Array.from(e.target.files);
+        atualizarPreviewImagensLojista();
+    });
+}
+
+function atualizarPreviewImagensLojista() {
+    const containerPreview = document.getElementById('preview-imagens-lojista');
+    if (!containerPreview) return;
+    containerPreview.innerHTML = '';
+
+    if (arquivosProdutosLojistaSelecionados.length > 0) {
+        const aviso = document.createElement('p');
+        aviso.style.cssText = 'width: 100%; font-size: 0.85rem; color: var(--cinza); margin-bottom: 5px;';
+        aviso.innerHTML = '⭐ <strong>Foto de Capa:</strong> A primeira imagem (com moldura dourada) será a capa. Clique em outra para defini-la como capa:';
+        containerPreview.appendChild(aviso);
+    }
+
+    arquivosProdutosLojistaSelecionados.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const wrapper = document.createElement('div');
+            const ehCapa = index === 0;
+
+            wrapper.style.cssText = `
+                position: relative;
+                width: 75px;
+                height: 75px;
+                border: 3px solid ${ehCapa ? 'var(--dourado, #d4af37)' : '#ccc'};
+                border-radius: 8px;
+                overflow: hidden;
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            `;
+
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; display: block;';
+            wrapper.appendChild(img);
+
+            if (ehCapa) {
+                const badge = document.createElement('span');
+                badge.innerText = 'CAPA';
+                badge.style.cssText = 'position: absolute; bottom: 0; left: 0; right: 0; background: rgba(212,175,55,0.9); color: #000; font-size: 9px; font-weight: bold; text-align: center;';
+                wrapper.appendChild(badge);
+            }
+
+            wrapper.addEventListener('click', () => {
+                const imagemClicada = arquivosProdutosLojistaSelecionados.splice(index, 1)[0];
+                arquivosProdutosLojistaSelecionados.unshift(imagemClicada);
+                atualizarPreviewImagensLojista();
+            });
+
+            containerPreview.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function carregarProdutosLojista(slug) {
+    const container = document.getElementById("lista-produtos-lojista");
+    if (!container) return;
+
+    fetch(`${API_URL}/bancas/${slug}`)
+        .then(res => res.json())
+        .then(dados => {
+            container.innerHTML = "";
+            const produtos = dados.produtos || [];
+
+            if (produtos.length === 0) {
+                container.innerHTML = `<p class="carregando-texto">Nenhum produto cadastrado nesta banca.</p>`;
+                return;
+            }
+
+            produtos.forEach(prod => {
+                const produtoId = prod.id || prod._id;
+                const capa = (prod.imagens && prod.imagens.length > 0) ? prod.imagens[0] : '../assets/logo/logo.png';
+
+                const card = document.createElement("div");
+                card.className = "card-depoimento-publico";
+                card.style.marginBottom = "15px";
+
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <img src="${capa}" alt="${prod.nome}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1px solid var(--dourado);">
+                            <div>
+                                <strong style="font-family: 'Cinzel', serif; color: var(--azul-principal); font-size: 1.05rem;">${prod.nome}</strong>
+                                <br><span style="color: var(--dourado-escuro); font-weight: bold;">R$ ${Number(prod.preco).toFixed(2)}</span>
+                                <br><small style="color: var(--cinza);">${prod.disponibilidade || 'Em estoque'}</small>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-mago-base btn-tipo-1" onclick="prepararEdicaoProdutoLojista('${produtoId}', '${encodeURIComponent(JSON.stringify(prod))}')" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Editar</button>
+                            <button type="button" class="btn-mago-base btn-tipo-2" onclick="excluirProdutoLojista('${produtoId}')" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px; background: #c0392b !important;">Excluir</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(err => console.error("Erro ao carregar catálogo da banca:", err));
+}
+
+function configurarFormularioProdutoLojista() {
+    const form = document.getElementById("form-criar-produto-lojista");
+    const btnCancelar = document.getElementById("btn-cancelar-prod-lojista");
+    if (!form) return;
+
+    const novoForm = form.cloneNode(true);
+    form.parentNode.replaceChild(novoForm, form);
+
+    document.getElementById("form-criar-produto-lojista").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const idEdicao = document.getElementById("edit-prod-id").value;
+        const isEditando = idEdicao !== "";
+
+        const formData = new FormData();
+        formData.append("nome", document.getElementById("prod-nome").value);
+        formData.append("preco", document.getElementById("prod-preco").value);
+        formData.append("descricao", document.getElementById("prod-descricao").value);
+        formData.append("disponibilidade", document.getElementById("prod-disponibilidade").value);
+
+        arquivosProdutosLojistaSelecionados.forEach(file => {
+            formData.append("imagens", file);
+        });
+
+        const urlDestino = isEditando
+            ? `${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos/${idEdicao}`
+            : `${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos`;
+
+        const metodoHttp = isEditando ? "PUT" : "POST";
+
+        try {
+            const resposta = await fetch(urlDestino, {
+                method: metodoHttp,
+                body: formData
+            });
+
+            if (resposta.ok) {
+                alert(isEditando ? "Produto atualizado com sucesso!" : "Produto cadastrado no catálogo!");
+                resetarFormularioProdutoLojista();
+                carregarProdutosLojista(slugBancaAtualLojista);
+            } else {
+                alert("Erro ao salvar o produto na API.");
+            }
+        } catch (err) {
+            console.error("Erro:", err);
+            alert("Não foi possível conectar com a API.");
+        }
+    });
+
+    if (btnCancelar) {
+        btnCancelar.onclick = () => {
+            resetarFormularioProdutoLojista();
+        };
+    }
+}
+
+window.prepararEdicaoProdutoLojista = function (id, prodJsonStr) {
+    const prod = JSON.parse(decodeURIComponent(prodJsonStr));
+
+    document.getElementById("edit-prod-id").value = id;
+    document.getElementById("prod-nome").value = prod.nome || "";
+    document.getElementById("prod-preco").value = prod.preco || "";
+    document.getElementById("prod-descricao").value = prod.descricao || "";
+    document.getElementById("prod-disponibilidade").value = prod.disponibilidade || "Disponível na banca";
+
+    document.getElementById("titulo-form-produto-lojista").textContent = `Editar Produto: ${prod.nome}`;
+    document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Atualizar Produto";
+    document.getElementById("btn-cancelar-prod-lojista").style.display = "inline-flex";
+
+    window.scrollTo({ top: document.getElementById("form-criar-produto-lojista").offsetTop - 100, behavior: "smooth" });
+};
+
+function resetarFormularioProdutoLojista() {
+    const form = document.getElementById("form-criar-produto-lojista");
+    if (form) form.reset();
+
+    document.getElementById("edit-prod-id").value = "";
+    document.getElementById("titulo-form-produto-lojista").textContent = "Cadastrar Novo Produto / Tesouro";
+    document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Salvar Produto no Catálogo";
+    document.getElementById("btn-cancelar-prod-lojista").style.display = "none";
+
+    arquivosProdutosLojistaSelecionados = [];
+    const containerPreview = document.getElementById("preview-imagens-lojista");
+    if (containerPreview) containerPreview.innerHTML = "";
+}
+
+window.excluirProdutoLojista = async function (idProduto) {
+    if (!confirm("Tem certeza de que deseja remover este produto do catálogo da banca?")) return;
+
+    try {
+        const resposta = await fetch(`${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos/${idProduto}`, {
+            method: "DELETE"
+        });
+
+        if (resposta.ok) {
+            alert("Produto removido com sucesso!");
+            carregarProdutosLojista(slugBancaAtualLojista);
+        } else {
+            alert("Erro ao excluir o produto.");
+        }
+    } catch (err) {
+        console.error("Erro ao excluir:", err);
+        alert("Não foi possível comunicar com a API.");
+    }
+};
+
+
+// -----------------------------------------------------
+// GESTÃO DE EVENTOS / FEIRAS (ADMIN MASTER)
 // -----------------------------------------------------
 function carregarEventosAdmin() {
     const container = document.getElementById("lista-eventos-admin");
@@ -286,8 +499,9 @@ window.excluirEvento = function(id) {
         });
 }
 
+
 // -----------------------------------------------------
-// MODERAÇÃO DE DEPOIMENTOS (EXIBINDO FOTO DE PERFIL / INICIAL)
+// MODERAÇÃO DE DEPOIMENTOS (ADMIN MASTER)
 // -----------------------------------------------------
 function carregarDepoimentosAdmin() {
     const container = document.getElementById("lista-depoimentos-admin");
