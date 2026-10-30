@@ -1,571 +1,544 @@
 // =====================================================
-// O MAGO DA SERRA - LÓGICA DO PAINEL ADMINISTRATIVO
+// O MAGO DA SERRA - JAVASCRIPT PRINCIPAL
+// Arquivo responsável pelos comportamentos e interações do site
 // =====================================================
 
-const API_URL = "https://omagodaserra.pythonanywhere.com";
-const SENHA_ADMIN_MASTER = "mago1234";
+const CONFIG = {
+    // Endereço real da sua API no PythonAnywhere
+    API_URL: "https://omagodaserra.pythonanywhere.com",
 
-// Variáveis globais do painel
-let chaveLojistaAtual = "";
-let slugBancaAtualLojista = "";
-let arquivosProdutosLojistaSelecionados = [];
+    // Nome da aplicação
+    APP_NAME: "O Mago da Serra"
+};
+
+
+// -----------------------------------------------------
+// INICIALIZAÇÃO
+// -----------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
-    configurarAnoRodape();
-    configurarLogin();
-    configurarFormularioBanca();
-    configurarFormularioEvento();
-    configurarBotaoSair();
-    inicializarPreviewImagensLojista();
+    inicializarSite();
+    const menuToggleBtn = document.getElementById("menu-toggle-btn");
+    const navDropdownMenu = document.getElementById("nav-dropdown-menu");
+
+    // Lógica do Menu Principal
+    if (menuToggleBtn && navDropdownMenu) {
+        menuToggleBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            navDropdownMenu.classList.toggle("ativo");
+        });
+    }
+
+    // Fecha o menu ao clicar fora
+    document.addEventListener("click", (e) => {
+        if (navDropdownMenu && !navDropdownMenu.contains(e.target) && !menuToggleBtn?.contains(e.target)) {
+            navDropdownMenu.classList.remove("ativo");
+        }
+    });
 });
 
-function configurarAnoRodape() {
-    const spanAno = document.getElementById("ano-atual");
-    if (spanAno) {
-        spanAno.textContent = new Date().getFullYear();
+function inicializarSite() {
+    console.log(`${CONFIG.APP_NAME} iniciado com magia.`);
+
+    inicializarMenu();
+    inicializarAno();
+    inicializarBancasParceiros();
+    inicializarEventos();
+    inicializarDepoimentos();
+    inicializarEnvioDepoimento();
+    inicializarToggleDepoimento();
+    inicializarConversaMago();
+}
+
+
+// -----------------------------------------------------
+// MENU E SONS (COMPATÍVEL COM RAIZ E SUBPASTAS)
+// -----------------------------------------------------
+
+function inicializarMenu() {
+    const estaEmSubpasta = window.location.pathname.includes('/pages/');
+    const caminhoSom = estaEmSubpasta ? '../assets/sons/clique.mp3' : 'assets/sons/clique.mp3';
+    const somClique = new Audio(caminhoSom);
+
+    const elementosComSom = document.querySelectorAll(".btn-som-3, .btn-som-2, .btn-som-1");
+    
+    elementosComSom.forEach(elemento => {
+        elemento.addEventListener("click", () => {
+            somClique.currentTime = 0;
+            somClique.play().catch(erro => console.log("Áudio aguardando interação:", erro));
+        });
+    });
+}
+
+
+// -----------------------------------------------------
+// ANO DO RODAPÉ
+// -----------------------------------------------------
+
+function inicializarAno() {
+    const elementoAno = document.querySelector("#ano-atual");
+    if (elementoAno) {
+        elementoAno.textContent = new Date().getFullYear();
     }
 }
 
-function configurarLogin() {
-    const formLogin = document.getElementById("form-login-admin");
-    if (!formLogin) return;
-
-    formLogin.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const credencial = document.getElementById("senha-ou-chave").value.trim();
-
-        document.getElementById("painel-login-wrapper").style.display = "none";
-        document.getElementById("painel-conteudo-restrito").style.display = "block";
-
-        if (credencial === SENHA_ADMIN_MASTER) {
-            document.getElementById("bloco-admin-master").style.display = "block";
-            carregarBancasAdmin();
-            carregarEventosAdmin();
-            carregarDepoimentosAdmin();
-        } else {
-            verificarChaveLojista(credencial);
-        }
-    });
-}
-
-function verificarChaveLojista(chave) {
-    fetch(`${API_URL}/bancas`)
-        .then(res => res.json())
-        .then(bancas => {
-            const bancaEncontrada = bancas.find(b => b.chave_acesso === chave);
-
-            if (bancaEncontrada) {
-                chaveLojistaAtual = chave;
-                slugBancaAtualLojista = bancaEncontrada.slug;
-
-                document.getElementById("bloco-lojista-parceiro").style.display = "block";
-                document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${bancaEncontrada.nome}`;
-
-                // Preenche o formulário do lojista com os dados atuais da banca dele
-                document.getElementById("lojista-nome").value = bancaEncontrada.nome || "";
-                document.getElementById("lojista-slogan").value = bancaEncontrada.slogan || "";
-                document.getElementById("lojista-descricao").value = bancaEncontrada.descricao || "";
-                document.getElementById("lojista-whatsapp").value = bancaEncontrada.whatsapp || "";
-                document.getElementById("lojista-instagram").value = bancaEncontrada.instagram || "";
-                document.getElementById("lojista-localizacao").value = bancaEncontrada.localizacao || "";
-
-                configurarFormularioLojista();
-                carregarProdutosLojista(bancaEncontrada.slug);
-                configurarFormularioProdutoLojista();
-            } else {
-                alert("Credencial inválida! Verifique sua senha de administrador ou chave de acesso.");
-                window.location.reload();
-            }
-        })
-        .catch(err => {
-            console.error("Erro ao validar chave:", err);
-            alert("Erro de conexão com o reino.");
-            window.location.reload();
-        });
-}
-
-function configurarBotaoSair() {
-    const btnSair = document.getElementById("btn-sair");
-    if (!btnSair) return;
-
-    btnSair.addEventListener("click", () => {
-        window.location.reload();
-    });
-}
-
 // -----------------------------------------------------
-// GESTÃO DE BANCAS (ADMIN MASTER)
+// FACHADAS DAS BANCAS VIRTUAIS & EXPOSITORES (PÁGINA INICIAL)
 // -----------------------------------------------------
-function carregarBancasAdmin() {
-    const container = document.getElementById("lista-bancas-admin");
+
+
+function inicializarBancasParceiros() {
+    const container = document.querySelector("#grid-bancas-parceiros");
     if (!container) return;
 
-    fetch(`${API_URL}/bancas`)
-        .then(res => res.json())
+    // Busca as bancas diretamente da API cadastradas pelo Admin/Lojista
+    fetch(`${CONFIG.API_URL}/bancas`)
+        .then(response => {
+            if (!response.ok) throw new Error("Erro ao buscar bancas");
+            return response.json();
+        })
         .then(bancas => {
             container.innerHTML = "";
+
             if (bancas.length === 0) {
-                container.innerHTML = `<p class="carregando-texto">Nenhuma banca cadastrada.</p>`;
+                container.innerHTML = `<p class="carregando-texto">Nenhuma banca parceira disponível no momento.</p>`;
                 return;
             }
 
             bancas.forEach(banca => {
-                const card = document.createElement("div");
-                card.className = "card-depoimento-publico";
-                card.style.marginBottom = "15px";
+                const card = document.createElement("article");
+                card.classList.add("produto-card");
+
+                // Imagem cadastrada ou imagem padrão caso não tenha sido enviada
+                const imagemFachada = banca.logo_path || 'assets/logo/logo.png';
+                const linkPagina = `pages/banca.html?slug=${banca.slug}`;
 
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                        <div>
-                            <h3 style="font-family: 'Cinzel', serif; color: var(--azul-principal);">${banca.nome}</h3>
-                            <p style="font-size: 0.9rem; color: var(--cinza);">URL: /pages/banca.html?slug=${banca.slug}</p>
-                            <p style="font-size: 0.9rem; color: var(--dourado-escuro);">Chave: <code>${banca.chave_acesso}</code></p>
-                            <p style="font-size: 0.85rem; color: var(--cinza);">📞 WhatsApp: ${banca.whatsapp || 'Não informado'} | 📸 Insta: ${banca.instagram ? 'Sim' : 'Não'}</p>
-                        </div>
-                        <button class="btn-mago-base btn-tipo-1" onclick="excluirBanca(${banca.id})" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Excluir</button>
+                    <div style="position: relative; overflow: hidden;">
+                        <img src="${imagemFachada}" alt="Fachada da ${banca.nome}" onerror="this.src='assets/logo/logo.png'" style="height: 180px; object-fit: cover; width: 100%;">
+                        <a href="${linkPagina}" class="btn-mago-base btn-tipo-1 btn-som-1" style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); width: 85%; padding: 8px 12px; min-height: 38px; font-size: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+                            <span>ENTRAR</span>
+                        </a>
+                    </div>
+                    <div class="produto-card-body" style="padding: 14px; display: flex; flex-direction: column; justify-content: flex-start; flex-grow: 1;">
+                        <h3 style="font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--azul-profundo); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${banca.nome}">${banca.nome}</h3>
+                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${banca.slogan || banca.descricao || 'Criações artesanais exclusivas.'}</p>
                     </div>
                 `;
+
                 container.appendChild(card);
             });
-        });
-}
-
-function configurarFormularioBanca() {
-    const form = document.getElementById("form-criar-banca");
-    if (!form) return;
-
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append("nome", document.getElementById("banca-nome").value);
-        formData.append("slug", document.getElementById("banca-slug").value);
-        formData.append("slogan", document.getElementById("banca-slogan").value);
-
-        const logoInput = document.getElementById("banca-logo");
-        if (logoInput.files[0]) formData.append("imagens", logoInput.files[0]);
-
-        fetch(`${API_URL}/bancas`, { method: "POST", body: formData })
-            .then(res => res.json())
-            .then(resultado => {
-                alert(`Banca criada com sucesso! Chave gerada para o lojista: ${resultado.banca.chave_acesso}`);
-                form.reset();
-                carregarBancasAdmin();
-            })
-            .catch(err => {
-                console.error("Erro:", err);
-                alert("Erro ao criar a banca.");
-            });
-    });
-}
-
-window.excluirBanca = function(id) {
-    if (!confirm("Tem certeza que deseja apagar esta banca?")) return;
-    fetch(`${API_URL}/bancas/${id}`, { method: "DELETE" })
-        .then(() => {
-            alert("Banca excluída!");
-            carregarBancasAdmin();
-        });
-}
-
-function configurarFormularioLojista() {
-    const form = document.getElementById("form-editar-banca-lojista");
-    if (!form) return;
-
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append("nome", document.getElementById("lojista-nome").value);
-        formData.append("slogan", document.getElementById("lojista-slogan").value);
-        formData.append("descricao", document.getElementById("lojista-descricao").value);
-        formData.append("whatsapp", document.getElementById("lojista-whatsapp").value);
-        formData.append("instagram", document.getElementById("lojista-instagram").value);
-        formData.append("localizacao", document.getElementById("lojista-localizacao").value);
-
-        const logoInput = document.getElementById("lojista-logo");
-        if (logoInput.files[0]) {
-            formData.append("imagens", logoInput.files[0]);
-        }
-
-        fetch(`${API_URL}/bancas/chave/${chaveLojistaAtual}`, {
-            method: "PUT",
-            body: formData
         })
-        .then(res => res.json())
-        .then(resultado => {
-            alert("Informações da banca atualizadas com sucesso!");
-            document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${resultado.banca.nome}`;
-        })
-        .catch(err => {
-            console.error("Erro:", err);
-            alert("Erro ao atualizar os dados da banca.");
+        .catch(error => {
+            console.error("Erro ao carregar bancas virtuais:", error);
+            container.innerHTML = `<p class="carregando-texto">Não foi possível carregar as bancas parceiras no momento.</p>`;
         });
-    };
 }
-
 
 // -----------------------------------------------------
-// GESTÃO DE PRODUTOS DA BANCA PELO LOJISTA (COM CAPA E MÚLTIPLAS FOTOS)
+// EVENTOS E FEIRAS PRESENCIAIS (DINÂMICO VIA API)
 // -----------------------------------------------------
 
-function inicializarPreviewImagensLojista() {
-    const inputImg = document.getElementById('prod-imagens');
-    if (!inputImg) return;
-
-    const containerPreview = document.createElement('div');
-    containerPreview.id = 'preview-imagens-lojista';
-    containerPreview.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; width: 100%;';
-    inputImg.parentNode.insertBefore(containerPreview, inputImg.nextSibling);
-
-    inputImg.addEventListener('change', function (e) {
-        arquivosProdutosLojistaSelecionados = Array.from(e.target.files);
-        atualizarPreviewImagensLojista();
-    });
-}
-
-function atualizarPreviewImagensLojista() {
-    const containerPreview = document.getElementById('preview-imagens-lojista');
-    if (!containerPreview) return;
-    containerPreview.innerHTML = '';
-
-    if (arquivosProdutosLojistaSelecionados.length > 0) {
-        const aviso = document.createElement('p');
-        aviso.style.cssText = 'width: 100%; font-size: 0.85rem; color: var(--cinza); margin-bottom: 5px;';
-        aviso.innerHTML = '⭐ <strong>Foto de Capa:</strong> A primeira imagem (com moldura dourada) será a capa. Clique em outra para defini-la como capa:';
-        containerPreview.appendChild(aviso);
-    }
-
-    arquivosProdutosLojistaSelecionados.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const wrapper = document.createElement('div');
-            const ehCapa = index === 0;
-
-            wrapper.style.cssText = `
-                position: relative;
-                width: 75px;
-                height: 75px;
-                border: 3px solid ${ehCapa ? 'var(--dourado, #d4af37)' : '#ccc'};
-                border-radius: 8px;
-                overflow: hidden;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            `;
-
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; display: block;';
-            wrapper.appendChild(img);
-
-            if (ehCapa) {
-                const badge = document.createElement('span');
-                badge.innerText = 'CAPA';
-                badge.style.cssText = 'position: absolute; bottom: 0; left: 0; right: 0; background: rgba(212,175,55,0.9); color: #000; font-size: 9px; font-weight: bold; text-align: center;';
-                wrapper.appendChild(badge);
-            }
-
-            wrapper.addEventListener('click', () => {
-                const imagemClicada = arquivosProdutosLojistaSelecionados.splice(index, 1)[0];
-                arquivosProdutosLojistaSelecionados.unshift(imagemClicada);
-                atualizarPreviewImagensLojista();
-            });
-
-            containerPreview.appendChild(wrapper);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function carregarProdutosLojista(slug) {
-    const container = document.getElementById("lista-produtos-lojista");
+async function inicializarEventos() {
+    const container = document.querySelector("#eventos-container");
     if (!container) return;
 
-    fetch(`${API_URL}/bancas/${slug}`)
-        .then(res => res.json())
-        .then(dados => {
-            container.innerHTML = "";
-            const produtos = dados.produtos || [];
+    try {
+        const resposta = await fetch(`${CONFIG.API_URL}/eventos`);
 
-            if (produtos.length === 0) {
-                container.innerHTML = `<p class="carregando-texto">Nenhum produto cadastrado nesta banca.</p>`;
-                return;
-            }
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP: ${resposta.status}`);
+        }
 
-            produtos.forEach(prod => {
-                const produtoId = prod.id || prod._id;
-                const capa = (prod.imagens && prod.imagens.length > 0) ? prod.imagens[0] : '../assets/logo/logo.png';
+        const eventos = await resposta.json();
+        container.innerHTML = "";
 
-                const card = document.createElement("div");
-                card.className = "card-depoimento-publico";
-                card.style.marginBottom = "15px";
+        if (eventos.length === 0) {
+            container.innerHTML = "<p class='carregando-texto'>Nenhum evento agendado no momento. Acompanhe o nosso Instagram!</p>";
+            return;
+        }
 
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <img src="${capa}" alt="${prod.nome}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1px solid var(--dourado);">
-                            <div>
-                                <strong style="font-family: 'Cinzel', serif; color: var(--azul-principal); font-size: 1.05rem;">${prod.nome}</strong>
-                                <br><span style="color: var(--dourado-escuro); font-weight: bold;">R$ ${Number(prod.preco).toFixed(2)}</span>
-                                <br><small style="color: var(--cinza);">${prod.disponibilidade || 'Em estoque'}</small>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button type="button" class="btn-mago-base btn-tipo-1" onclick="prepararEdicaoProdutoLojista('${produtoId}', '${encodeURIComponent(JSON.stringify(prod))}')" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Editar</button>
-                            <button type="button" class="btn-mago-base btn-tipo-2" onclick="excluirProdutoLojista('${produtoId}')" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px; background: #c0392b !important;">Excluir</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
+        // Garante que usa a classe do carrossel/grid padrão do site
+        container.classList.add("eventos-container");
+
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        let listaEventosFiltrados = [];
+
+        eventos.forEach(evento => {
+            const listaDatas = (evento.datas && Array.isArray(evento.datas) && evento.datas.length > 0)
+                ? evento.datas
+                : [evento.data || ""];
+
+            listaDatas.forEach(dataStr => {
+                const partes = dataStr.split('/');
+                if (partes.length === 3) {
+                    const dia = parseInt(partes[0], 10);
+                    const mes = parseInt(partes[1], 10) - 1;
+                    const ano = parseInt(partes[2], 10);
+                    const dataObj = new Date(ano, mes, dia);
+
+                    if (!isNaN(dataObj.getTime()) && dataObj >= hoje) {
+                        listaEventosFiltrados.push({
+                            evento: evento,
+                            dataStr: dataStr,
+                            dataObj: dataObj
+                        });
+                    }
+                }
             });
-        })
-        .catch(err => console.error("Erro ao carregar catálogo da banca:", err));
-}
-
-function configurarFormularioProdutoLojista() {
-    const form = document.getElementById("form-criar-produto-lojista");
-    const btnCancelar = document.getElementById("btn-cancelar-prod-lojista");
-    if (!form) return;
-
-    const novoForm = form.cloneNode(true);
-    form.parentNode.replaceChild(novoForm, form);
-
-    document.getElementById("form-criar-produto-lojista").addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const idEdicao = document.getElementById("edit-prod-id").value;
-        const isEditando = idEdicao !== "";
-
-        const formData = new FormData();
-        formData.append("nome", document.getElementById("prod-nome").value);
-        formData.append("preco", document.getElementById("prod-preco").value);
-        formData.append("descricao", document.getElementById("prod-descricao").value);
-        formData.append("disponibilidade", document.getElementById("prod-disponibilidade").value);
-
-        arquivosProdutosLojistaSelecionados.forEach(file => {
-            formData.append("imagens", file);
         });
 
-        const urlDestino = isEditando
-            ? `${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos/${idEdicao}`
-            : `${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos`;
+        // Ordena cronologicamente pela data mais próxima
+        listaEventosFiltrados.sort((a, b) => a.dataObj - b.dataObj);
 
-        const metodoHttp = isEditando ? "PUT" : "POST";
+        if (listaEventosFiltrados.length === 0) {
+            container.innerHTML = "<p class='carregando-texto'>Nenhum evento agendado para as próximas datas.</p>";
+            return;
+        }
+
+        listaEventosFiltrados.forEach(item => {
+            const evento = item.evento;
+            const dataIndividual = item.dataStr;
+
+            const card = document.createElement("article");
+            card.classList.add("produto-card"); // Utiliza a classe padrão de card do Mago
+
+            const imagemSrc = evento.imagem ? evento.imagem : 'assets/logo/logo.png';
+
+            card.innerHTML = `
+                <div style="position: relative; overflow: hidden;">
+                    <img src="${imagemSrc}" alt="${evento.nome}" style="height: 180px; object-fit: cover; width: 100%;" onerror="this.src='assets/logo/logo.png'">
+                    <span style="position: absolute; top: 10px; right: 10px; background: var(--azul-principal); color: var(--dourado-claro); font-family: 'Cinzel', serif; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; border: 1px solid var(--dourado);">📅 ${dataIndividual}</span>
+                </div>
+                <div class="produto-card-body" style="padding: 18px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
+                    <div>
+                        <h3 style="font-family: 'Cinzel', serif; font-size: 1.15rem; color: var(--azul-profundo); margin-bottom: 8px;">${evento.nome}</h3>
+                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 4px;">📍 ${evento.local}</p>
+                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 16px;">⏰ ${evento.horario || '09h às 18h'}</p>
+                    </div>
+                    <a href="pages/evento.html?id=${evento.id}" class="btn-mago-base btn-tipo-1 btn-som-1" style="padding: 8px 16px; min-height: 38px; font-size: 0.85rem; width: 100%;">
+                        <span>Ver Detalhes</span>
+                    </a>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+        console.log(`${listaEventosFiltrados.length} eventos carregados com sucesso.`);
+
+    } catch (erro) {
+        console.error("Erro ao carregar eventos:", erro);
+        container.innerHTML = "<p class='carregando-texto'>Não foi possível carregar os eventos no momento.</p>";
+    }
+}
+
+
+// -----------------------------------------------------
+// DEPOIMENTOS PÚBLICOS
+// -----------------------------------------------------
+
+async function inicializarDepoimentos() {
+    const container = document.querySelector("#lista-depoimentos-publicos");
+    if (!container) return;
+
+    try {
+        const resposta = await fetch(`${CONFIG.API_URL}/depoimentos`);
+
+        if (!resposta.ok) {
+            throw new Error(`Erro HTTP: ${resposta.status}`);
+        }
+
+        const depoimentos = await resposta.json();
+        container.innerHTML = "";
+
+        if (depoimentos.length === 0) {
+            container.innerHTML = "<p class='carregando-texto'>Ainda não há depoimentos publicados. Seja o primeiro a avaliar!</p>";
+            return;
+        }
+
+        depoimentos.forEach(d => {
+            const estrelasStr = "⭐".repeat(d.estrelas);
+            
+            // Pega a primeira letra do nome para o Avatar de Perfil Padrão
+            const inicialNome = d.nome ? d.nome.charAt(0).toUpperCase() : '🧙‍♂️';
+
+            // Lógica da Foto de Perfil: Exibe a foto enviada ou gera o Avatar de Perfil com Inicial
+            const fotoPerfilHtml = d.foto_path ? `
+                <div class="depoimento-avatar-wrapper">
+                    <img src="${d.foto_path}" alt="Foto de perfil de ${d.nome}" class="depoimento-avatar-img">
+                </div>
+            ` : `
+                <div class="depoimento-avatar-wrapper depoimento-avatar-inicial">
+                    <span>${inicialNome}</span>
+                </div>
+            `;
+
+            const card = document.createElement("div");
+            card.classList.add("card-depoimento-publico");
+
+            card.innerHTML = `
+                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                    ${fotoPerfilHtml}
+                    <div style="flex-grow: 1; overflow: hidden;">
+                        <div style="color: #f39c12; margin-bottom: 4px; font-size: 0.85rem;">${estrelasStr}</div>
+                        <p class="texto-depoimento-limitado" style="color: var(--cinza); font-style: italic; font-size: 0.95rem; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">
+                            "${d.mensagem}"
+                        </p>
+                        <button class="btn-expandir-depo" style="background: none; border: none; color: var(--dourado-escuro); font-weight: bold; font-size: 0.8rem; cursor: pointer; padding: 0; margin-bottom: 8px; text-decoration: underline;">
+                            Ver mais
+                        </button>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; border-top: 1px solid var(--cinza-claro); padding-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 0.85rem; color: var(--azul-profundo); font-family: 'Cinzel', serif;">${d.nome}</strong>
+                    <small style="color: var(--cinza); font-size: 0.75rem;">${d.cidade}</small>
+                </div>
+            `;
+
+            const btnExpandir = card.querySelector(".btn-expandir-depo");
+            const pMensagem = card.querySelector(".texto-depoimento-limitado");
+
+            if (d.mensagem.length < 120) {
+                btnExpandir.style.display = "none";
+            }
+
+            btnExpandir.addEventListener("click", () => {
+                if (pMensagem.style.webkitLineClamp === "unset") {
+                    pMensagem.style.webkitLineClamp = "4";
+                    pMensagem.style.display = "-webkit-box";
+                    btnExpandir.textContent = "Ver mais";
+                } else {
+                    pMensagem.style.webkitLineClamp = "unset";
+                    pMensagem.style.display = "block";
+                    btnExpandir.textContent = "Ver menos";
+                }
+            });
+
+            container.appendChild(card);
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar depoimentos:", erro);
+        container.innerHTML = "<p class='carregando-texto'>Não foi possível carregar os depoimentos no momento.</p>";
+    }
+}
+
+
+// -----------------------------------------------------
+// API - ENVIO DE NOVO DEPOIMENTO (DINÂMICO)
+// -----------------------------------------------------
+
+function inicializarEnvioDepoimento() {
+    const form = document.querySelector("#form-enviar-depoimento");
+    if (!form) return;
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('nome', document.querySelector("#depo-nome").value);
+        formData.append('cidade', document.querySelector("#depo-cidade").value);
+        formData.append('estrelas', document.querySelector("#depo-estrelas").value);
+        formData.append('mensagem', document.querySelector("#depo-mensagem").value);
+
+        const fotoInput = document.querySelector("#depo-foto");
+        if (fotoInput && fotoInput.files.length > 0) {
+            formData.append('foto', fotoInput.files[0]);
+        }
 
         try {
-            const resposta = await fetch(urlDestino, {
-                method: metodoHttp,
+            const resposta = await fetch(`${CONFIG.API_URL}/depoimentos`, {
+                method: 'POST',
                 body: formData
             });
 
             if (resposta.ok) {
-                alert(isEditando ? "Produto atualizado com sucesso!" : "Produto cadastrado no catálogo!");
-                resetarFormularioProdutoLojista();
-                carregarProdutosLojista(slugBancaAtualLojista);
-            } else {
-                alert("Erro ao salvar o produto na API.");
-            }
-        } catch (err) {
-            console.error("Erro:", err);
-            alert("Não foi possível conectar com a API.");
-        }
-    });
-
-    if (btnCancelar) {
-        btnCancelar.onclick = () => {
-            resetarFormularioProdutoLojista();
-        };
-    }
-}
-
-window.prepararEdicaoProdutoLojista = function (id, prodJsonStr) {
-    const prod = JSON.parse(decodeURIComponent(prodJsonStr));
-
-    document.getElementById("edit-prod-id").value = id;
-    document.getElementById("prod-nome").value = prod.nome || "";
-    document.getElementById("prod-preco").value = prod.preco || "";
-    document.getElementById("prod-descricao").value = prod.descricao || "";
-    document.getElementById("prod-disponibilidade").value = prod.disponibilidade || "Disponível na banca";
-
-    document.getElementById("titulo-form-produto-lojista").textContent = `Editar Produto: ${prod.nome}`;
-    document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Atualizar Produto";
-    document.getElementById("btn-cancelar-prod-lojista").style.display = "inline-flex";
-
-    window.scrollTo({ top: document.getElementById("form-criar-produto-lojista").offsetTop - 100, behavior: "smooth" });
-};
-
-function resetarFormularioProdutoLojista() {
-    const form = document.getElementById("form-criar-produto-lojista");
-    if (form) form.reset();
-
-    document.getElementById("edit-prod-id").value = "";
-    document.getElementById("titulo-form-produto-lojista").textContent = "Cadastrar Novo Produto / Tesouro";
-    document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Salvar Produto no Catálogo";
-    document.getElementById("btn-cancelar-prod-lojista").style.display = "none";
-
-    arquivosProdutosLojistaSelecionados = [];
-    const containerPreview = document.getElementById("preview-imagens-lojista");
-    if (containerPreview) containerPreview.innerHTML = "";
-}
-
-window.excluirProdutoLojista = async function (idProduto) {
-    if (!confirm("Tem certeza de que deseja remover este produto do catálogo da banca?")) return;
-
-    try {
-        const resposta = await fetch(`${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos/${idProduto}`, {
-            method: "DELETE"
-        });
-
-        if (resposta.ok) {
-            alert("Produto removido com sucesso!");
-            carregarProdutosLojista(slugBancaAtualLojista);
-        } else {
-            alert("Erro ao excluir o produto.");
-        }
-    } catch (err) {
-        console.error("Erro ao excluir:", err);
-        alert("Não foi possível comunicar com a API.");
-    }
-};
-
-
-// -----------------------------------------------------
-// GESTÃO DE EVENTOS / FEIRAS (ADMIN MASTER)
-// -----------------------------------------------------
-function carregarEventosAdmin() {
-    const container = document.getElementById("lista-eventos-admin");
-    if (!container) return;
-
-    fetch(`${API_URL}/eventos`)
-        .then(res => res.json())
-        .then(eventos => {
-            container.innerHTML = "";
-            if (eventos.length === 0) {
-                container.innerHTML = `<p class="carregando-texto">Nenhum evento cadastrado.</p>`;
-                return;
-            }
-
-            eventos.forEach(ev => {
-                const card = document.createElement("div");
-                card.className = "card-depoimento-publico";
-                card.style.marginBottom = "15px";
-
-                const datasTexto = Array.isArray(ev.datas) ? ev.datas.join(', ') : '';
-
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                        <div>
-                            <h3 style="font-family: 'Cinzel', serif; color: var(--azul-principal);">${ev.nome}</h3>
-                            <p style="font-size: 0.9rem; color: var(--cinza);">📅 ${datasTexto} | 📍 ${ev.local}</p>
-                        </div>
-                        <button class="btn-mago-base btn-tipo-1" onclick="excluirEvento(${ev.id})" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Excluir</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        });
-}
-
-function configurarFormularioEvento() {
-    const form = document.getElementById("form-evento");
-    if (!form) return;
-
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append("nome", document.getElementById("evento-nome").value);
-        formData.append("descricao", document.getElementById("evento-desc").value);
-        formData.append("datas", document.getElementById("evento-datas").value);
-        formData.append("local", document.getElementById("evento-local").value);
-        formData.append("horario", document.getElementById("evento-horario").value);
-
-        const imgInput = document.getElementById("evento-imagem");
-        if (imgInput.files[0]) formData.append("imagem", imgInput.files[0]);
-
-        fetch(`${API_URL}/eventos`, { method: "POST", body: formData })
-            .then(res => res.json())
-            .then(() => {
-                alert("Evento cadastrado com sucesso!");
+                alert("Muito obrigado! O seu depoimento foi enviado com sucesso e será publicado após a nossa verificação no painel.");
                 form.reset();
-                carregarEventosAdmin();
-            });
+            } else {
+                alert("Erro ao enviar o depoimento. Tente novamente.");
+            }
+        } catch (erro) {
+            console.error("Erro:", erro);
+            alert("Não foi possível conectar ao servidor.");
+        }
     });
 }
 
-window.excluirEvento = function(id) {
-    if (!confirm("Tem certeza que deseja apagar este evento?")) return;
-    fetch(`${API_URL}/eventos/${id}`, { method: "DELETE" })
-        .then(() => {
-            alert("Evento excluído!");
-            carregarEventosAdmin();
-        });
+function inicializarToggleDepoimento() {
+    const btnToggle = document.querySelector("#btn-toggle-depoimento");
+    const wrapperForm = document.querySelector("#wrapper-form-depoimento");
+
+    if (!btnToggle || !wrapperForm) return;
+
+    btnToggle.addEventListener("click", () => {
+        if (wrapperForm.style.display === "none" || wrapperForm.style.display === "") {
+            wrapperForm.style.display = "block";
+            btnToggle.textContent = "Esconder formulário";
+            wrapperForm.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            wrapperForm.style.display = "none";
+            btnToggle.textContent = "Deixe o seu depoimento";
+        }
+    });
 }
 
 
 // -----------------------------------------------------
-// MODERAÇÃO DE DEPOIMENTOS (ADMIN MASTER)
+// LÓGICA DA CONVERSA INTERATIVA COM O MAGO DA SERRA
 // -----------------------------------------------------
-function carregarDepoimentosAdmin() {
-    const container = document.getElementById("lista-depoimentos-admin");
-    if (!container) return;
 
-    fetch(`${API_URL}/admin/depoimentos`)
-        .then(res => res.json())
-        .then(deps => {
-            container.innerHTML = "";
-            if (deps.length === 0) {
-                container.innerHTML = `<p class="carregando-texto">Nenhum depoimento para moderar.</p>`;
-                return;
+const roteiroConversa = [
+    {
+        fala: "Saudações, jovem aprendiz! Eu sou o Mago da Serra. Clique em mim para iniciarmos nossa jornada mágica!",
+        botao: "Vamos lá!",
+        imagem: "mascote-img.png"
+    },
+    {
+        fala: "Você conhece o famoso Chapéu Seletor de Hogwarts? Nós temos um colega dele do mundo Mágico, seu nome... que tal descobrirmos Juntos? Responda ao quiz e descubra sua casa presencialmente em nossa banca!",
+        botao: "Quero Ver o SELETOR",
+        imagem: "mascote2-img.png"
+    },
+    {
+        fala: "Aqui no nosso reino, a magia do artesanato se une à diversão das feiras. Venha conhecer a arte Mágica de quem Faz com as Próprias Mãos!",
+        botao: "As Bancas Do Reino",
+        imagem: "mascote3-img.png",
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('#chapeu-seletor').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
+            }, 1500);
+        }
+    },
+    {
+        fala: "Participamos das melhores feiras e Eventos da região, venha encontrar o Sapo Seletor para ver qual será o teu Destino!",
+        botao: "Veja onde Estaremos!",
+        imagem: "mascote4-img.png",
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('#bancas-parceiros').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
+            }, 1500);
+        }
+    },
+    {
+        fala: "Siga-nos no Instagram (@omagodaserra) para acompanhar os bastidores, os melhores momentos nas feiras, e participar dos Concursos, agora estamos tentando Daru um nome mágico ao Sapo Seletor, nos Ajude pelo insta.",
+        botao: "Ver redes sociais",
+        imagem: "mascote5-img.png",
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('#eventos').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
+            }, 1500);
+        }
+    },
+    {
+        fala: "Ficou com alguma dúvida ou deseja dar alguma sujestão? Fale diretamente comigo pelo WhatsApp abaixo. Até breve!",
+        botao: "Falar com o Mago",
+        imagem: "mascote6-img.png",
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('#redes-sociais').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
+            }, 1500);
+        }
+    },
+    {
+        fala: "Te Mostrei o Meu Reino e como ele Funciona, Explore meu reino mágico o quanto quiser, mas se ainda tiveres dúvidas reinicie a conversa. Espero ter ajudado!" ,
+        botao: "Reiniciar conversa",
+        imagem: "mascote7-img.png",
+        final: true,
+        acao: () => {
+            const posicaoOriginal = window.scrollY;
+            document.querySelector('#contato').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                window.scrollTo({ top: posicaoOriginal, behavior: 'smooth' });
+            }, 1500);
+        }
+    }
+];
+
+let cenaAtual = 0;
+const caminhoImagens = "assets/mascote/";
+
+function inicializarConversaMago() {
+    const areaMascote = document.getElementById('area-mascote');
+    const imgMascote = document.getElementById('img-mascote');
+    const balaoFala = document.getElementById('balao-fala-mago');
+    const textoFala = document.getElementById('texto-fala');
+    const btnProxima = document.getElementById('btn-proxima-fala');
+
+    if (!areaMascote || !imgMascote || !balaoFala || !textoFala || !btnProxima) return;
+
+    imgMascote.style.transition = "opacity 0.4s ease-in-out, transform 0.4s ease-in-out";
+
+    function atualizarCena() {
+        const dadosCena = roteiroConversa[cenaAtual];
+        balaoFala.classList.remove('visivel');
+
+        imgMascote.style.opacity = 0;
+        imgMascote.style.transform = "scale(0.96)";
+
+        setTimeout(() => {
+            // Mantém a imagem base ou alterna caso tenha variações
+            imgMascote.src = caminhoImagens + dadosCena.imagem;
+            
+            imgMascote.style.opacity = 1;
+            imgMascote.style.transform = "scale(1)";
+
+            textoFala.textContent = dadosCena.fala;
+            btnProxima.textContent = dadosCena.botao;
+
+            if (dadosCena.acao) {
+                dadosCena.acao();
             }
 
-            deps.forEach(dep => {
-                const inicialNome = dep.nome ? dep.nome.charAt(0).toUpperCase() : '🧙‍♂️';
-                const fotoPerfilHtml = dep.foto_path ? `
-                    <div class="depoimento-avatar-wrapper" style="width: 50px; height: 50px;">
-                        <img src="${dep.foto_path}" alt="Foto" class="depoimento-avatar-img">
-                    </div>
-                ` : `
-                    <div class="depoimento-avatar-wrapper depoimento-avatar-inicial" style="width: 50px; height: 50px;">
-                        <span style="font-size: 1.1rem;">${inicialNome}</span>
-                    </div>
-                `;
+            balaoFala.classList.add('visivel');
+        }, 300);
+    }
 
-                const card = document.createElement("div");
-                card.className = "card-depoimento-publico";
-                card.style.marginBottom = "15px";
+    areaMascote.addEventListener('click', () => {
+        if (balaoFala.classList.contains('visivel')) {
+            avancarConversa();
+        } else {
+            balaoFala.classList.add('visivel');
+        }
+    });
 
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                        <div style="display: flex; gap: 15px; align-items: center;">
-                            ${fotoPerfilHtml}
-                            <div>
-                                <strong style="color: var(--azul-principal);">${dep.nome}</strong> (${dep.cidade}) - ${dep.estrelas} ⭐
-                                <p style="font-size: 0.9rem; color: var(--cinza); margin: 4px 0;">"${dep.mensagem}"</p>
-                                <small>Status: ${dep.aprovado ? '✅ Aprovado' : '⏳ Pendente'}</small>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            ${!dep.aprovado ? `<button class="btn-mago-base btn-tipo-1" onclick="aprovarDepoimento(${dep.id})" style="padding: 6px 12px; font-size: 0.8rem; min-height: 32px;">Aprovar</button>` : ''}
-                            <button class="btn-mago-base btn-tipo-2" onclick="excluirDepoimento(${dep.id})" style="padding: 6px 12px; font-size: 0.8rem; min-height: 32px;">Excluir</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        });
+    btnProxima.addEventListener('click', (e) => {
+        e.stopPropagation();
+        avancarConversa();
+    });
+
+    function avancarConversa() {
+        if (cenaAtual < roteiroConversa.length - 1) {
+            cenaAtual++;
+            atualizarCena();
+        } else {
+            cenaAtual = 0; // Reinicia o ciclo
+            atualizarCena();
+        }
+    }
 }
 
-window.aprovarDepoimento = function(id) {
-    fetch(`${API_URL}/depoimentos/${id}/aprovar`, { method: "PUT" })
-        .then(() => {
-            alert("Depoimento aprovado e publicado!");
-            carregarDepoimentosAdmin();
-        });
-}
 
-window.excluirDepoimento = function(id) {
-    if (!confirm("Tem certeza que deseja excluir este depoimento?")) return;
-    fetch(`${API_URL}/depoimentos/${id}`, { method: "DELETE" })
-        .then(() => {
-            alert("Depoimento excluído!");
-            carregarDepoimentosAdmin();
-        });
+// -----------------------------------------------------
+// WHATSAPP
+// -----------------------------------------------------
+
+function falarPeloWhatsApp(e) {
+    if (e) e.preventDefault();
+
+    const numeroWhatsApp = "5554996322787";
+    const mensagem = "Olá, Mago da Serra! Gostaria de tirar algumas dúvidas sobre as pelúcias, feiras e produtos mágicos.";
+    
+    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+    window.open(url, "_blank");
 }
