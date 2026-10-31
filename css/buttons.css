@@ -317,3 +317,50 @@ footer a:hover {
         grid-template-columns: 1fr;
     }
 }
+/* =========================================================
+   BOTÕES DE CONTATO DA BANCA LADO A LADO (DESKTOP E MOBILE)
+   ========================================================= */
+
+.banca-contato-grid {
+    display: flex !important;
+    flex-direction: row !important;      /* Garante que fiquem em linha */
+    flex-wrap: wrap !important;         /* Permite que quebrem linha apenas se faltar espaço extremo */
+    justify-content: center !important;  /* Centraliza os botões */
+    align-items: center !important;
+    gap: 10px !important;                /* Espaçamento compacto entre eles */
+    width: 100% !important;
+    max-width: 700px !important;
+    margin: 20px auto 25px auto !important;
+}
+
+/* Reduz ligeiramente o tamanho e padding dos botões de contato para caberem lado a lado no celular */
+.banca-contato-grid .btn-mago-base.btn-tipo-2 {
+    flex: 1 1 30% !important;            /* Divide o espaço de forma fluida */
+    min-width: 140px !important;         /* Garante que o texto não esmague demais */
+    max-width: 220px !important;
+    padding: 10px 12px !important;
+    min-height: 44px !important;
+    font-size: 0.85rem !important;       /* Fonte compacta */
+}
+
+/* Garante que os ícones acompanhem a proporção compacta */
+.banca-contato-grid .btn-mago-icone {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+}
+
+/* Ajuste específico para ecrãs muito pequenos (telemóveis estreitos) */
+@media (max-width: 480px) {
+    .banca-contato-grid {
+        gap: 8px !important;
+    }
+    
+    .banca-contato-grid .btn-mago-base.btn-tipo-2 {
+        flex: 1 1 45% !important;        /* Ficam 2 por linha se o ecrã for muito pequeno, ou ajuste abaixo */
+        min-width: 130px !important;
+        font-size: 0.78rem !important;
+        padding: 8px 8px !important;
+    }
+}
