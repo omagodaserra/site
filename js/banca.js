@@ -57,7 +57,7 @@ function renderizarBotoesContato(dados) {
         aWhats.href = `https://wa.me/${dados.whatsapp}?text=${encodeURIComponent("Olá! Vim pela banca " + dados.nome + " no site O Mago da Serra.")}`;
         aWhats.target = "_blank";
         aWhats.className = "btn-mago-base btn-tipo-2";
-        aWhats.innerHTML = `<img src="../assets/icones/whats.png" alt="WhatsApp" class="btn-mago-icone"><span>WhatsApp do Lojista</span>`;
+        aWhats.innerHTML = `<img src="../assets/icones/whats.png" alt="WhatsApp" class="btn-mago-icone"><span>WhatsApp</span>`;
         container.appendChild(aWhats);
     }
 
@@ -66,7 +66,7 @@ function renderizarBotoesContato(dados) {
         aInsta.href = dados.instagram;
         aInsta.target = "_blank";
         aInsta.className = "btn-mago-base btn-tipo-2";
-        aInsta.innerHTML = `<img src="../assets/icones/instagram.png" alt="Instagram" class="btn-mago-icone"><span>Instagram da Banca</span>`;
+        aInsta.innerHTML = `<img src="../assets/icones/instagram.png" alt="Instagram" class="btn-mago-icone"><span>Instagram</span>`;
         container.appendChild(aInsta);
     }
 
@@ -76,7 +76,7 @@ function renderizarBotoesContato(dados) {
         aLocal.href = linkLocal;
         aLocal.target = "_blank";
         aLocal.className = "btn-mago-base btn-tipo-2";
-        aLocal.innerHTML = `<img src="../assets/icones/fone.png" alt="Localização" class="btn-mago-icone"><span>Ver Localização / Banca</span>`;
+        aLocal.innerHTML = `<img src="../assets/icones/fone.png" alt="Localização" class="btn-mago-icone"><span>Localização / Banca</span>`;
         container.appendChild(aLocal);
     }
 }
