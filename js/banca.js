@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Renderizar botões dinâmicos de contacto (WhatsApp, Instagram, Localização)
             renderizarBotoesContato(dados);
 
-            // Renderizar produtos da banca
+            // Renderizar produtos da banca no padrão do catálogo
             renderizarProdutosBanca(dados.produtos || [], slugBanca);
         })
         .catch(err => {
@@ -87,34 +87,98 @@ function renderizarProdutosBanca(produtos, slugBanca) {
     const container = document.getElementById("lista-catalogo-banca");
     container.innerHTML = "";
 
+    // Remove indicadores antigos antes de recriar
+    const indicadoresAntigos = document.getElementById("catalogo-indicadores-banca");
+    if (indicadoresAntigos) indicadoresAntigos.remove();
+
     if (produtos.length === 0) {
         container.innerHTML = `<p class="carregando-texto">Esta banca ainda não possui produtos cadastrados no catálogo.</p>`;
         return;
     }
 
-    produtos.forEach(produto => {
+    produtos.forEach((produto, index) => {
         const capa = produto.imagens && produto.imagens.length > 0 ? produto.imagens[0] : '../assets/logo/logo.png';
         
         const card = document.createElement("div");
         card.className = "produto-card";
+        card.dataset.index = index;
+
         card.innerHTML = `
             <div class="produto-card-img">
-                <img src="${capa}" alt="${produto.nome}" style="height: 200px; object-fit: cover; width: 100%;">
+                <img src="${capa}" alt="${produto.nome}">
             </div>
-            <div class="produto-card-body" style="padding: 15px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
-                <div>
-                    <h3 style="font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--azul-profundo); margin-bottom: 6px;">${produto.nome}</h3>
-                    <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 10px;">${produto.descricao || ''}</p>
-                    <div class="produto-preco" style="font-weight: bold; color: var(--dourado-escuro); margin-bottom: 12px;">R$ ${Number(produto.preco).toFixed(2)}</div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <a href="banca-produto.html?banca=${slugBanca}&id=${produto.id}" class="btn-mago-base btn-tipo-2" style="width: 100%; padding: 8px; font-size: 0.85rem; text-align: center;">Ver Detalhes</a>
-                    <button type="button" onclick='adicionarAoCarrinhoBanca("${slugBanca}", ${JSON.stringify(produto)})' class="btn-mago-base btn-tipo-1" style="width: 100%; padding: 8px; font-size: 0.85rem;">Adicionar ao Carrinho</button>
+            <div class="produto-card-body">
+                <h3>${produto.nome}</h3>
+                <p>${produto.descricao ? produto.descricao.substring(0, 80) + '...' : 'Peça artesanal exclusiva da banca.'}</p>
+                <div class="produto-preco">R$ ${Number(produto.preco).toFixed(2)}</div>
+                <div class="produto-botoes">
+                    <a href="banca-produto.html?banca=${slugBanca}&id=${produto.id}" class="btn-detalhes">Detalhes</a>
+                    <button type="button" class="btn-add-carrinho" onclick='adicionarAoCarrinhoBanca("${slugBanca}", ${JSON.stringify(produto)})'>Adicionar</button>
                 </div>
             </div>
         `;
         container.appendChild(card);
     });
+
+    criarMarcadoresPosicaoBanca(produtos.length);
+}
+
+function criarMarcadoresPosicaoBanca(totalProdutos) {
+    const containerCatalogo = document.getElementById("lista-catalogo-banca");
+    const secaoCatalogo = containerCatalogo.closest(".secao-catalogo");
+
+    if (!containerCatalogo || !secaoCatalogo) return;
+
+    const indicadoresContainer = document.createElement("div");
+    indicadoresContainer.className = "catalogo-indicadores";
+    indicadoresContainer.id = "catalogo-indicadores-banca";
+
+    for (let i = 0; i < totalProdutos; i++) {
+        const bolinha = document.createElement("button");
+        bolinha.type = "button";
+        bolinha.className = i === 0 ? "bolinha-indicador ativa" : "bolinha-indicador";
+        bolinha.setAttribute("aria-label", `Ir para produto ${i + 1}`);
+        bolinha.dataset.index = i;
+
+        bolinha.addEventListener("click", () => {
+            const cards = containerCatalogo.querySelectorAll(".produto-card");
+            if (cards[i]) {
+                cards[i].scrollIntoView({
+                    behavior: "smooth",
+                    inline: "start",
+                    block: "nearest"
+                });
+            }
+        });
+
+        indicadoresContainer.appendChild(bolinha);
+    }
+
+    secaoCatalogo.appendChild(indicadoresContainer);
+
+    containerCatalogo.addEventListener("scroll", () => {
+        const cards = containerCatalogo.querySelectorAll(".produto-card");
+        const bolinhas = indicadoresContainer.querySelectorAll(".bolinha-indicador");
+        
+        let cardMaisProximo = 0;
+        let menorDistancia = Infinity;
+
+        cards.forEach((card, index) => {
+            const distancia = Math.abs(card.offsetLeft - containerCatalogo.scrollLeft);
+            if (distancia < menorDistancia) {
+                menorDistancia = distancia;
+                cardMaisProximo = index;
+            }
+        });
+
+        bolinhas.forEach((bolinha, index) => {
+            if (index === cardMaisProximo) {
+                bolinha.classList.add("ativa");
+            } else {
+                bolinha.classList.remove("ativa");
+            }
+        });
+    }, { passive: true });
 }
 
 // Adicionar produto ao carrinho exclusivo da banca no localStorage
