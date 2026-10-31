@@ -76,7 +76,7 @@ function renderizarBotoesContato(dados) {
         aLocal.href = linkLocal;
         aLocal.target = "_blank";
         aLocal.className = "btn-mago-base btn-tipo-2";
-        aLocal.innerHTML = `<img src="../assets/icones/fone.png" alt="Localização" class="btn-mago-icone"><span>Localização / Banca</span>`;
+        aLocal.innerHTML = `<img src="../assets/icones/fone.png" alt="Localização" class="btn-mago-icone"><span>Localização</span>`;
         container.appendChild(aLocal);
     }
 }
