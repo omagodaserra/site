@@ -67,7 +67,115 @@
     color: var(--cinza) !important;
     font-family: 'Cormorant Garamond', serif !important;
 }
+/* =========================================================
+   PADRONIZAÇÃO COMPACTA DO CATÁLOGO DA BANCA (IGUAL AO CATÁLOGO)
+   ========================================================= */
 
+#lista-catalogo-banca.produtos-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 1080px !important;
+    margin: 0 auto !important;
+    padding: 10px 4px 22px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+#lista-catalogo-banca.produtos-grid::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* Força os cartões da banca a terem rigorosamente 230px de largura no computador */
+#lista-catalogo-banca.produtos-grid > * {
+    box-sizing: border-box !important;
+    flex: 0 0 230px !important;
+    width: 230px !important;
+    min-width: 230px !important;
+    max-width: 230px !important;
+    scroll-snap-align: start !important;
+}
+
+/* Padronização interna dos botões e do corpo do card na banca */
+#lista-catalogo-banca .produto-card {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    margin: 0 !important;
+    background: var(--branco, #ffffff) !important;
+    border: 1px solid var(--cinza-claro, #e2e8f0) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: var(--sombra) !important;
+}
+
+#lista-catalogo-banca .produto-card-img,
+#lista-catalogo-banca .produto-card-img img {
+    width: 100% !important;
+    height: 190px !important;
+    max-height: 190px !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: contain !important;
+    background: #f9f9f9 !important;
+}
+
+#lista-catalogo-banca .produto-card-body {
+    padding: 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex-grow: 1 !important;
+}
+
+#lista-catalogo-banca .produto-card h3 {
+    font-size: 0.95rem !important;
+    line-height: 1.3 !important;
+    color: var(--azul-profundo, #0d1526) !important;
+    margin-bottom: 8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+#lista-catalogo-banca .produto-botoes {
+    display: flex !important;
+    gap: 8px !important;
+    margin-top: auto !important;
+}
+
+#lista-catalogo-banca .produto-botoes a,
+#lista-catalogo-banca .produto-botoes button {
+    padding: 8px 6px !important;
+    min-height: 36px !important;
+    font-size: 0.8rem !important;
+    border-radius: 6px !important;
+    flex: 1 !important;
+    text-align: center !important;
+}
+
+/* Responsividade idêntica para telemóveis */
+@media (max-width: 768px) {
+    #lista-catalogo-banca.produtos-grid > * {
+        flex-basis: 48% !important;
+        width: 48% !important;
+        min-width: 48% !important;
+        max-width: 48% !important;
+    }
+
+    #lista-catalogo-banca .produto-card img,
+    #lista-catalogo-banca .produto-card-img img {
+        height: auto !important;
+        max-height: none !important;
+        aspect-ratio: 1 / 1 !important;
+    }
+}
 /* ---------------------------------------------------------
    2. DEPOIMENTOS & FORMULÁRIO INTERATIVO
    --------------------------------------------------------- */
