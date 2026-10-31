@@ -344,25 +344,41 @@ section p:not(.carregando-texto):not(.texto-depoimento-limitado) {
     color: var(--dourado-claro) !important;
 }
 /* =========================================================
-   REGRAS PARA BANCAS VIRTUAIS E CARRINHOS EXCLUSIVOS
+   LOGO DA BANCA (SUPORTE A FUNDO TRANSPARENTE E BRILHO MÍSTICO)
    ========================================================= */
 
-.banca-contato-grid {
+.banca-logo-container {
+    margin-bottom: 20px !important;
     display: flex !important;
     justify-content: center !important;
-    gap: 15px !important;
-    flex-wrap: wrap !important;
-    margin-top: 20px !important;
-    margin-bottom: 25px !important;
+    align-items: center !important;
 }
 
-.banca-logo-img {
-    width: 100px !important;
-    height: 100px !important;
+.banca-logo-img,
+.banca-logo-container img {
+    max-width: 140px !important;
+    max-height: 140px !important;
+    width: auto !important;
+    height: auto !important;
     object-fit: contain !important;
-    border-radius: 50% !important;
-    border: 2px solid var(--dourado) !important;
+    border-radius: 0 !important;       /* Remove a limitação circular */
+    border: none !important;           /* Remove a borda circular */
+    background: transparent !important; /* Garante o fundo transparente */
     margin: 0 auto !important;
+    
+    /* Aplica uma leve sombra/brilho dourado que segue exatamente o contorno transparente do logo */
+    filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.45)) 
+            drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6)) !important;
+    
+    transition: transform 0.3s ease, filter 0.3s ease !important;
+}
+
+/* Efeito suave de destaque ao passar o rato (Hover) */
+.banca-logo-img:hover,
+.banca-logo-container img:hover {
+    transform: scale(1.05) !important;
+    filter: drop-shadow(0 0 18px rgba(243, 229, 171, 0.7)) 
+            drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7)) !important;
 }
 
 .carrinho-item {
