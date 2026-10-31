@@ -30,8 +30,9 @@
     </header>
 
     <main>
-        <section class="secao-catalogo secao-banca-topo">
-            <div class="catalogo-cabecalho-texto banca-cabecalho-wrapper">
+        <!-- Alterado para usar o id="hero" e manter o mesmo padrão visual da página inicial -->
+        <section id="hero" class="secao-banca-topo">
+            <div class="hero-conteudo banca-cabecalho-wrapper">
                 <div id="banca-cabecalho-logo" class="banca-logo-container">
                     <!-- Carregado via JS -->
                 </div>
@@ -44,8 +45,10 @@
                     <!-- Gerado dinamicamente via JS -->
                 </div>
             </div>
+        </section>
 
-            <!-- CATÁLOGO DE PRODUTOS DAQUELA BANCA -->
+        <!-- CATÁLOGO DE PRODUTOS DAQUELA BANCA -->
+        <section class="secao-catalogo">
             <div id="lista-catalogo-banca" class="produtos-grid">
                 <p class="carregando-texto">A carregar o catálogo de tesouros...</p>
             </div>
