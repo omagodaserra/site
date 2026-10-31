@@ -176,6 +176,49 @@
         aspect-ratio: 1 / 1 !important;
     }
 }
+/* =========================================================
+   AJUSTE DOS BOTÕES DO CATÁLOGO DA BANCA (LADO A LADO)
+   ========================================================= */
+
+#lista-catalogo-banca .produto-botoes {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: auto !important;
+}
+
+#lista-catalogo-banca .produto-botoes a,
+#lista-catalogo-banca .produto-botoes button {
+    flex: 1 !important;
+    width: 50% !important;
+    min-width: 0 !important; /* Impede que o texto force o crescimento do botão */
+    padding: 6px 4px !important;
+    min-height: 34px !important;
+    font-size: 0.75rem !important; /* Reduz ligeiramente a fonte para caber perfeitamente */
+    border-radius: 6px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Ajustes específicos para telemóveis */
+@media (max-width: 768px) {
+    #lista-catalogo-banca .produto-card-body {
+        padding: 10px !important; /* Reduz o espaçamento interno do card no mobile para dar mais espaço */
+    }
+
+    #lista-catalogo-banca .produto-botoes a,
+    #lista-catalogo-banca .produto-botoes button {
+        padding: 6px 2px !important;
+        font-size: 0.72rem !important;
+        letter-spacing: -0.2px !important; /* Compacta levemente as letras para garantir que "Adicionar" não corte */
+    }
+}
 /* ---------------------------------------------------------
    2. DEPOIMENTOS & FORMULÁRIO INTERATIVO
    --------------------------------------------------------- */
