@@ -34,10 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("banca-slogan-h2").textContent = dados.slogan || "";
             document.getElementById("banca-descricao-p").textContent = dados.descricao || "";
 
-            // Renderizar botões dinâmicos de contacto (WhatsApp, Instagram, Localização)
+            // Renderizar botões dinâmicos de contacto com o padrão de classes do Mago
             renderizarBotoesContato(dados);
 
-            // Renderizar produtos da banca no padrão do catálogo
+            // Renderizar produtos da banca no padrão do carrossel do catálogo
             renderizarProdutosBanca(dados.produtos || [], slugBanca);
         })
         .catch(err => {
@@ -45,39 +45,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 });
 
-// Renderizar botões dinâmicos com imagem padrão do CSS
+// Renderizar botões dinâmicos utilizando as classes de botões oficiais (.btn-mago-base .btn-tipo-2)
 function renderizarBotoesContato(dados) {
     const container = document.getElementById("banca-botoes-contato");
     if (!container) return;
     container.innerHTML = "";
+    container.className = "banca-contato-grid"; // Garante o alinhamento do CSS
 
-    // 1. Botão WhatsApp (se cadastrado)
     if (dados.whatsapp) {
         const aWhats = document.createElement("a");
         aWhats.href = `https://wa.me/${dados.whatsapp}?text=${encodeURIComponent("Olá! Vim pela banca " + dados.nome + " no site O Mago da Serra.")}`;
         aWhats.target = "_blank";
-        aWhats.className = "btn-mago-base btn-tipo-2 btn-som-2";
+        aWhats.className = "btn-mago-base btn-tipo-2";
         aWhats.innerHTML = `<img src="../assets/icones/whats.png" alt="WhatsApp" class="btn-mago-icone"><span>WhatsApp do Lojista</span>`;
         container.appendChild(aWhats);
     }
 
-    // 2. Botão Instagram (se cadastrado)
     if (dados.instagram) {
         const aInsta = document.createElement("a");
         aInsta.href = dados.instagram;
         aInsta.target = "_blank";
-        aInsta.className = "btn-mago-base btn-tipo-2 btn-som-2";
+        aInsta.className = "btn-mago-base btn-tipo-2";
         aInsta.innerHTML = `<img src="../assets/icones/instagram.png" alt="Instagram" class="btn-mago-icone"><span>Instagram da Banca</span>`;
         container.appendChild(aInsta);
     }
 
-    // 3. Botão Localização (se cadastrado)
     if (dados.localizacao || dados.mapa) {
         const linkLocal = dados.localizacao || dados.mapa;
         const aLocal = document.createElement("a");
         aLocal.href = linkLocal;
         aLocal.target = "_blank";
-        aLocal.className = "btn-mago-base btn-tipo-2 btn-som-2";
+        aLocal.className = "btn-mago-base btn-tipo-2";
         aLocal.innerHTML = `<img src="../assets/icones/fone.png" alt="Localização" class="btn-mago-icone"><span>Ver Localização / Banca</span>`;
         container.appendChild(aLocal);
     }
@@ -85,6 +83,7 @@ function renderizarBotoesContato(dados) {
 
 function renderizarProdutosBanca(produtos, slugBanca) {
     const container = document.getElementById("lista-catalogo-banca");
+    if (!container) return;
     container.innerHTML = "";
 
     // Remove indicadores antigos antes de recriar
@@ -103,17 +102,18 @@ function renderizarProdutosBanca(produtos, slugBanca) {
         card.className = "produto-card";
         card.dataset.index = index;
 
+        // Estrutura interna compatível com as variáveis de cor e tipografia do style_2.css / carrossel_2.css
         card.innerHTML = `
-            <div class="produto-card-img">
-                <img src="${capa}" alt="${produto.nome}">
+            <div class="produto-card-img" style="width: 100%; height: 200px; overflow: hidden; background: var(--creme);">
+                <img src="${capa}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
             </div>
-            <div class="produto-card-body">
-                <h3>${produto.nome}</h3>
-                <p>${produto.descricao ? produto.descricao.substring(0, 80) + '...' : 'Peça artesanal exclusiva da banca.'}</p>
-                <div class="produto-preco">R$ ${Number(produto.preco).toFixed(2)}</div>
-                <div class="produto-botoes">
-                    <a href="banca-produto.html?banca=${slugBanca}&id=${produto.id}" class="btn-detalhes">Detalhes</a>
-                    <button type="button" class="btn-add-carrinho" onclick='adicionarAoCarrinhoBanca("${slugBanca}", ${JSON.stringify(produto)})'>Adicionar</button>
+            <div class="produto-card-body" style="padding: 18px; display: flex; flex-direction: column; flex-grow: 1; text-align: left;">
+                <h3 style="font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--azul-profundo); margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${produto.nome}</h3>
+                <p style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--cinza); margin-bottom: 15px; line-height: 1.4; flex-grow: 1;">${produto.descricao ? produto.descricao.substring(0, 75) + '...' : 'Peça artesanal exclusiva.'}</p>
+                <div class="produto-preco" style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.15rem; color: var(--dourado-escuro); margin-bottom: 15px;">R$ ${Number(produto.preco).toFixed(2)}</div>
+                <div class="produto-botoes" style="display: flex; gap: 10px; margin-top: auto;">
+                    <a href="banca-produto.html?banca=${slugBanca}&id=${produto.id}" class="btn-mago-base btn-tipo-1" style="padding: 8px 14px; min-height: 38px; font-size: 0.85rem; flex: 1; text-align: center;">Detalhes</a>
+                    <button type="button" class="btn-mago-base btn-tipo-2" style="padding: 8px 14px; min-height: 38px; font-size: 0.85rem; flex: 1;" onclick='adicionarAoCarrinhoBanca("${slugBanca}", ${JSON.stringify(produto)})'>Adicionar</button>
                 </div>
             </div>
         `;
@@ -125,20 +125,21 @@ function renderizarProdutosBanca(produtos, slugBanca) {
 
 function criarMarcadoresPosicaoBanca(totalProdutos) {
     const containerCatalogo = document.getElementById("lista-catalogo-banca");
-    const secaoCatalogo = containerCatalogo.closest(".secao-catalogo");
+    const secaoCatalogo = containerCatalogo ? containerCatalogo.closest(".secao-catalogo") : null;
 
     if (!containerCatalogo || !secaoCatalogo) return;
 
     const indicadoresContainer = document.createElement("div");
     indicadoresContainer.className = "catalogo-indicadores";
     indicadoresContainer.id = "catalogo-indicadores-banca";
+    indicadoresContainer.style.cssText = "display: flex; justify-content: center; gap: 8px; margin-top: 20px;";
 
     for (let i = 0; i < totalProdutos; i++) {
         const bolinha = document.createElement("button");
         bolinha.type = "button";
         bolinha.className = i === 0 ? "bolinha-indicador ativa" : "bolinha-indicador";
         bolinha.setAttribute("aria-label", `Ir para produto ${i + 1}`);
-        bolinha.dataset.index = i;
+        bolinha.style.cssText = `width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--dourado); background: ${i === 0 ? 'var(--dourado)' : 'transparent'}; cursor: pointer; transition: var(--transicao); padding: 0;`;
 
         bolinha.addEventListener("click", () => {
             const cards = containerCatalogo.querySelectorAll(".produto-card");
@@ -174,14 +175,15 @@ function criarMarcadoresPosicaoBanca(totalProdutos) {
         bolinhas.forEach((bolinha, index) => {
             if (index === cardMaisProximo) {
                 bolinha.classList.add("ativa");
+                bolinha.style.background = "var(--dourado)";
             } else {
                 bolinha.classList.remove("ativa");
+                bolinha.style.background = "transparent";
             }
         });
     }, { passive: true });
 }
 
-// Adicionar produto ao carrinho exclusivo da banca no localStorage
 window.adicionarAoCarrinhoBanca = function(slugBanca, produto) {
     const chaveStorage = `carrinho_banca_${slugBanca}`;
     let carrinho = JSON.parse(localStorage.getItem(chaveStorage)) || [];
