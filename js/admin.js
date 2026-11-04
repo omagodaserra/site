@@ -292,6 +292,7 @@ function carregarProdutosLojista(slug) {
 
             produtos.forEach(prod => {
                 const produtoId = prod.id || prod._id;
+                // Garante que a capa puxa corretamente a primeira imagem do array de imagens do produto[cite: 9]
                 const capa = (prod.imagens && prod.imagens.length > 0) ? prod.imagens[0] : '../assets/logo/logo.png';
 
                 const card = document.createElement("div");
@@ -325,6 +326,7 @@ function configurarFormularioProdutoLojista() {
     const btnCancelar = document.getElementById("btn-cancelar-prod-lojista");
     if (!form) return;
 
+    // Evita duplicação de eventos ao recriar o form
     const novoForm = form.cloneNode(true);
     form.parentNode.replaceChild(novoForm, form);
 
@@ -340,6 +342,7 @@ function configurarFormularioProdutoLojista() {
         formData.append("descricao", document.getElementById("prod-descricao").value);
         formData.append("disponibilidade", document.getElementById("prod-disponibilidade").value);
 
+        // Anexa rigorosamente cada arquivo selecionado no preview interativo ao FormData
         arquivosProdutosLojistaSelecionados.forEach(file => {
             formData.append("imagens", file);
         });
@@ -397,8 +400,8 @@ function resetarFormularioProdutoLojista() {
     if (form) form.reset();
 
     document.getElementById("edit-prod-id").value = "";
-    document.getElementById("titulo-form-produto-lojista").textContent = "Cadastrar Novo Produto / Tesouro";
-    document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Salvar Produto no Catálogo";
+    document.getElementById("titulo-form-produto-lojista").textContent = "Cadastrar Novo Produto na Banca";
+    document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Adicionar Produto";
     document.getElementById("btn-cancelar-prod-lojista").style.display = "none";
 
     arquivosProdutosLojistaSelecionados = [];
