@@ -47,10 +47,10 @@
             </div>
 
             <!-- CONTEÚDO DO PAINEL RESTRITO -->
-            <div id="painel-conteudo-restrito" style="display: none;">
+            <div id="painel-conteudo-restrito" class="painel-restrito-escondido">
 
                 <!-- 1. BLOCO ADMIN MASTER -->
-                <div id="bloco-admin-master" style="display: none;">
+                <div id="bloco-admin-master" class="bloco-painel-oculto">
 
                     <!-- Gerir Bancas -->
                     <div class="wrapper-form-depoimento-oculto admin-form-bloco">
@@ -68,17 +68,24 @@
                                 <label for="banca-slogan">Slogan / Subtítulo (H2):</label>
                                 <input type="text" id="banca-slogan">
                             </div>
-                            <!-- O campo de chave manual foi removido, pois o sistema gera automaticamente de forma segura -->
+
+                            <!-- Seleção de até 2 Categorias no Cadastro Master -->
+                            <div class="form-grupo-depo">
+                                <label>Categorias da Banca (Selecione no máximo 2):</label>
+                                <div class="grid-categorias-banca" id="container-cat-master">
+                                    <!-- Gerado dinamicamente via JS -->
+                                </div>
+                            </div>
+
                             <div class="form-grupo-depo">
                                 <label for="banca-logo">Logotipo da Banca (Opcional):</label>
                                 <input type="file" id="banca-logo" accept="image/*">
                             </div>
-                            <button type="submit" class="btn-mago-base btn-tipo-1">Criar Banca e Gerar Chave
-                                Automática</button>
+                            <button type="submit" class="btn-mago-base btn-tipo-1">Criar Banca e Gerar Chave Automática</button>
                         </form>
                     </div>
 
-                    <div class="admin-lista-container" style="margin-bottom: 40px;">
+                    <div class="admin-lista-container container-margem-inferior">
                         <h3 class="admin-titulo-secao">Bancas Registradas no Reino</h3>
                         <div id="lista-bancas-admin">
                             <p class="carregando-texto">A carregar bancas...</p>
@@ -99,8 +106,7 @@
                                 <textarea id="evento-desc" rows="3"></textarea>
                             </div>
                             <div class="form-grupo-depo">
-                                <label for="evento-datas">Datas (Separadas por vírgula, ex: 15/06/2026,
-                                    16/06/2026):</label>
+                                <label for="evento-datas">Datas (Separadas por vírgula, ex: 15/06/2026, 16/06/2026):</label>
                                 <input type="text" id="evento-datas" required>
                             </div>
                             <div class="form-grupo-depo">
@@ -115,19 +121,18 @@
                                 <label for="evento-imagem">Imagem do Evento:</label>
                                 <input type="file" id="evento-imagem" accept="image/*">
                             </div>
-                            <button type="submit" id="btn-salvar-evento" class="btn-mago-base btn-tipo-1">Salvar
-                                Evento</button>
+                            <button type="submit" id="btn-salvar-evento" class="btn-mago-base btn-tipo-1">Salvar Evento</button>
                         </form>
                     </div>
 
-                    <div class="admin-lista-container" style="margin-bottom: 40px;">
+                    <div class="admin-lista-container container-margem-inferior">
                         <h3 class="admin-titulo-secao">Eventos Cadastrados (Gerir)</h3>
                         <div id="lista-eventos-admin">
                             <p class="carregando-texto">A carregar eventos...</p>
                         </div>
                     </div>
 
-                    <!-- Moderação de Depoimentos (Com Fotos de Perfil) -->
+                    <!-- Moderação de Depoimentos -->
                     <div class="admin-lista-container">
                         <h3 class="admin-titulo-secao">Moderação de Depoimentos dos Visitantes</h3>
                         <div id="lista-depoimentos-admin">
@@ -138,14 +143,13 @@
                 </div>
 
                 <!-- 2. BLOCO LOJISTA PARCEIRO -->
-                <div id="bloco-lojista-parceiro" style="display: none;">
+                <div id="bloco-lojista-parceiro" class="bloco-painel-oculto">
                     <div class="admin-lista-container">
                         <h3 class="admin-titulo-secao" id="titulo-painel-lojista">Gestão da Banca</h3>
-                        <p class="carregando-texto" style="margin-bottom: 20px;">Atualize abaixo as informações
-                            comerciais e os produtos da sua banca.</p>
+                        <p class="carregando-texto texto-margem-baixo">Atualize abaixo as informações comerciais, categorias e produtos da sua banca.</p>
 
-                        <!-- Formulário para Editar Dados da Banca -->
-                        <div class="wrapper-form-depoimento-oculto admin-form-bloco" style="display: block !important;">
+                        <!-- Formulário para Editar Dados da Banca pelo Lojista -->
+                        <div class="wrapper-form-depoimento-oculto admin-form-bloco bloco-visivel-forcar">
                             <h3>Editar Dados da Minha Banca</h3>
                             <form id="form-editar-banca-lojista" enctype="multipart/form-data">
                                 <div class="form-grupo-depo">
@@ -160,6 +164,15 @@
                                     <label for="lojista-descricao">Descrição / História da Banca:</label>
                                     <textarea id="lojista-descricao" rows="3"></textarea>
                                 </div>
+
+                                <!-- Seleção de até 2 Categorias no Painel do Lojista -->
+                                <div class="form-grupo-depo">
+                                    <label>Categorias da Banca (Escolha até 2):</label>
+                                    <div class="grid-categorias-banca" id="container-cat-lojista">
+                                        <!-- Gerado dinamicamente via JS -->
+                                    </div>
+                                </div>
+
                                 <div class="form-grupo-depo">
                                     <label for="lojista-whatsapp">WhatsApp (Ex: 5554996322787):</label>
                                     <input type="text" id="lojista-whatsapp">
@@ -176,14 +189,12 @@
                                     <label for="lojista-logo">Alterar Logótipo:</label>
                                     <input type="file" id="lojista-logo" accept="image/*">
                                 </div>
-                                <button type="submit" class="btn-mago-base btn-tipo-1">Salvar Alterações da
-                                    Banca</button>
+                                <button type="submit" class="btn-mago-base btn-tipo-1">Salvar Alterações da Banca</button>
                             </form>
                         </div>
 
                         <!-- Formulário para Cadastrar Produto da Banca -->
-                        <div class="wrapper-form-depoimento-oculto admin-form-bloco"
-                            style="display: block !important; margin-top: 30px;">
+                        <div class="wrapper-form-depoimento-oculto admin-form-bloco bloco-visivel-forcar bloco-margem-topo">
                             <h3 id="titulo-form-produto-lojista">Cadastrar Novo Produto na Banca</h3>
                             <form id="form-criar-produto-lojista" enctype="multipart/form-data">
                                 <input type="hidden" id="edit-prod-id" value="">
@@ -198,8 +209,7 @@
                                 </div>
                                 <div class="form-grupo-depo">
                                     <label for="prod-descricao">Descrição do Produto:</label>
-                                    <textarea id="prod-descricao" rows="3"
-                                        placeholder="Detalhes da peça artesanal..."></textarea>
+                                    <textarea id="prod-descricao" rows="3" placeholder="Detalhes da peça artesanal..."></textarea>
                                 </div>
                                 <div class="form-grupo-depo">
                                     <label for="prod-disponibilidade">Disponibilidade:</label>
@@ -210,15 +220,13 @@
                                     <input type="file" id="prod-imagens" accept="image/*" multiple>
                                 </div>
 
-                                <button type="submit" id="btn-salvar-prod-lojista"
-                                    class="btn-mago-base btn-tipo-1"><span>Adicionar Produto</span></button>
-                                <button type="button" id="btn-cancelar-prod-lojista"
-                                    class="btn-mago-base btn-tipo-2" style="display: none; margin-top: 10px;"><span>Cancelar Edição</span></button>
+                                <button type="submit" id="btn-salvar-prod-lojista" class="btn-mago-base btn-tipo-1"><span>Adicionar Produto</span></button>
+                                <button type="button" id="btn-cancelar-prod-lojista" class="btn-mago-base btn-tipo-2 btn-cancelar-escondido"><span>Cancelar Edição</span></button>
                             </form>
                         </div>
 
-                        <!-- Lista de Produtos Cadastrados na Banca -->
-                        <div class="admin-lista-container" style="margin-top: 40px; margin-bottom: 40px;">
+                        <!-- Lista de Produtos Cadastrados -->
+                        <div class="admin-lista-container container-espacamento-duplo">
                             <h3 class="admin-titulo-secao">Produtos Cadastrados na Banca (Gerir)</h3>
                             <div id="lista-produtos-lojista">
                                 <p class="carregando-texto">A carregar produtos...</p>
@@ -226,6 +234,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
         </section>
     </main>
 
