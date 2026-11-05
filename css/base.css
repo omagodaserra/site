@@ -432,3 +432,202 @@ section p:not(.carregando-texto):not(.texto-depoimento-limitado) {
     font-size: 1.25rem !important;
     color: var(--azul-profundo) !important;
 }
+/* =========================================================
+   PÁGINA DE DETALHES DO PRODUTO (PADRÃO O MAGO DA SERRA)
+   ========================================================= */
+
+#produto {
+    background-color: var(--branco, #ffffff);
+    padding: 60px 8%;
+}
+
+.produto-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    align-items: start !important;
+}
+
+/* Galeria e Imagem Principal Ampla */
+.produto-galeria {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    width: 100% !important;
+}
+
+.produto-imagem-principal-container {
+    width: 100% !important;
+    max-width: 450px !important;
+    margin: 0 auto !important;
+    aspect-ratio: 1 / 1 !important;
+    background: var(--branco, #ffffff) !important;
+    border: 2px solid var(--dourado, #d4af37) !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: var(--sombra) !important;
+    padding: 12px !important;
+}
+
+.produto-imagem-principal {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    background: var(--creme, #f4f6fa) !important;
+    border-radius: 8px !important;
+}
+
+/* Miniaturas em linha logo abaixo */
+.produto-miniaturas {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    padding-bottom: 5px !important;
+    max-width: 450px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    justify-content: center !important;
+}
+
+.miniatura {
+    flex: 0 0 70px !important;
+    width: 70px !important;
+    height: 70px !important;
+    border: 2px solid var(--cinza-claro, #e2e8f0) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: var(--branco, #ffffff) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: var(--transicao, 0.3s ease) !important;
+}
+
+.miniatura.ativa {
+    border-color: var(--dourado, #d4af37) !important;
+    transform: scale(1.05);
+}
+
+.miniatura img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Informações do Produto */
+.produto-informacoes {
+    display: flex !important;
+    flex-direction: column !important;
+    text-align: left !important;
+}
+
+.produto-categoria {
+    font-family: 'Cinzel', serif !important;
+    color: var(--azul-principal, #1b2a47) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+}
+
+.produto-informacoes h1 {
+    font-family: 'Cinzel', serif !important;
+    font-size: clamp(1.8rem, 3vw, 2.5rem) !important;
+    color: var(--azul-profundo, #0d1526) !important;
+    margin-bottom: 15px !important;
+}
+
+.produto-descricao {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: var(--cinza, #555555) !important;
+    font-size: 1.15rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 20px !important;
+}
+
+.produto-caracteristicas {
+    background: var(--creme, #f4f6fa) !important;
+    padding: 15px 20px !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--cinza-claro, #e2e8f0) !important;
+    margin-bottom: 20px !important;
+}
+
+.produto-caracteristicas p {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 1.1rem !important;
+    color: var(--grafite, #1a1a1a) !important;
+    margin-bottom: 6px !important;
+}
+
+.produto-preco {
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: var(--dourado-escuro, #997a15) !important;
+    margin: 15px 0 25px 0 !important;
+}
+
+/* Botão WhatsApp personalizado no padrão O Mago da Serra */
+#produto-whatsapp.btn-whatsapp-personalizado,
+.btn-whatsapp-personalizado {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 14px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    padding: 14px 20px !important;
+    min-height: 54px !important;
+    background-color: rgba(27, 42, 71, 0.9) !important;
+    border: 1px solid var(--dourado, #d4af37) !important;
+    border-radius: 30px !important;
+    color: var(--dourado-claro, #f3e5ab) !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    transition: var(--transicao, 0.3s ease) !important;
+    cursor: pointer !important;
+    margin-top: 10px !important;
+}
+
+#produto-whatsapp.btn-whatsapp-personalizado:hover,
+.btn-whatsapp-personalizado:hover {
+    background-color: var(--azul-profundo, #0d1526) !important;
+    border-color: var(--dourado-claro, #f3e5ab) !important;
+    color: var(--branco, #ffffff) !important;
+    transform: translateY(-3px) !important;
+}
+
+.icone-contato-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    object-fit: contain !important;
+    display: block !important;
+    flex: 0 0 32px !important;
+}
+
+/* Responsividade para Telemóveis */
+@media (max-width: 768px) {
+    .produto-container {
+        grid-template-columns: 1fr !important;
+        gap: 25px !important;
+    }
+
+    .produto-imagem-principal-container {
+        max-width: 100% !important;
+        height: 300px !important;
+    }
+}
