@@ -5,6 +5,8 @@
 const API_URL = "https://omagodaserra.pythonanywhere.com";
 const SENHA_ADMIN_MASTER = "mago1234";
 
+const inputsPreviewImagensLojista = new WeakSet();
+
 // Variáveis globais do painel
 let chaveLojistaAtual = "";
 let slugBancaAtualLojista = "";
@@ -211,15 +213,30 @@ function inicializarPreviewImagensLojista() {
     const inputImg = document.getElementById('prod-imagens');
     if (!inputImg) return;
 
-    const containerPreview = document.createElement('div');
-    containerPreview.id = 'preview-imagens-lojista';
-    containerPreview.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; width: 100%;';
-    inputImg.parentNode.insertBefore(containerPreview, inputImg.nextSibling);
+    let containerPreview = document.getElementById('preview-imagens-lojista');
 
-    inputImg.addEventListener('change', function (e) {
-        arquivosProdutosLojistaSelecionados = Array.from(e.target.files);
-        atualizarPreviewImagensLojista();
-    });
+    if (!containerPreview) {
+        containerPreview = document.createElement('div');
+        containerPreview.id = 'preview-imagens-lojista';
+        containerPreview.style.cssText =
+            'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; width: 100%;';
+
+        inputImg.parentNode.insertBefore(
+            containerPreview,
+            inputImg.nextSibling
+        );
+    }
+
+    // Registra o evento uma única vez em cada elemento input.
+    if (!inputsPreviewImagensLojista.has(inputImg)) {
+        inputsPreviewImagensLojista.add(inputImg);
+
+        inputImg.addEventListener('change', function (e) {
+            arquivosProdutosLojistaSelecionados = Array.from(e.target.files);
+
+            atualizarPreviewImagensLojista();
+        });
+    }
 }
 
 function atualizarPreviewImagensLojista() {
@@ -323,32 +340,41 @@ function carregarProdutosLojista(slug) {
 
 function configurarFormularioProdutoLojista() {
     const form = document.getElementById("form-criar-produto-lojista");
-    const btnCancelar = document.getElementById("btn-cancelar-prod-lojista");
+
     if (!form) return;
 
-    // Evita duplicação de eventos ao recriar o form
+    // Clona o formulário para evitar duplicação de eventos.
     const novoForm = form.cloneNode(true);
     form.parentNode.replaceChild(novoForm, form);
 
-    document.getElementById("form-criar-produto-lojista").addEventListener("submit", async function (e) {
+    // IMPORTANTE: registra novamente o evento no input clonado.
+    inicializarPreviewImagensLojista();
+
+    // Reinicia a seleção de arquivos.
+    arquivosProdutosLojistaSelecionados = [];
+
+    novoForm.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const idEdicao = document.getElementById("edit-prod-id").value;
+        const idEdicao = novoForm.querySelector("#edit-prod-id").value;
         const isEditando = idEdicao !== "";
 
-        // No evento de submit de produto 
         const formData = new FormData();
-        formData.append("nome", document.getElementById("prod-nome").value);
-        formData.append("preco", document.getElementById("prod-preco").value);
-        formData.append("descricao", document.getElementById("prod-descricao").value);
-        formData.append("disponibilidade", document.getElementById("prod-disponibilidade").value);
 
-        // Certifica-se de que existem arquivos antes de anexar
-        if (arquivosProdutosLojistaSelecionados && arquivosProdutosLojistaSelecionados.length > 0) {
-            arquivosProdutosLojistaSelecionados.forEach(file => {
-                formData.append("imagens", file);
-            });
-        }
+        formData.append("nome", novoForm.querySelector("#prod-nome").value);
+        formData.append("preco", novoForm.querySelector("#prod-preco").value);
+        formData.append("descricao", novoForm.querySelector("#prod-descricao").value);
+        formData.append("disponibilidade", novoForm.querySelector("#prod-disponibilidade").value);
+
+        // Adiciona todas as imagens selecionadas.
+        console.log(
+            "Imagens selecionadas para envio:",
+            arquivosProdutosLojistaSelecionados.length
+        );
+
+        arquivosProdutosLojistaSelecionados.forEach(file => {
+            formData.append("imagens", file);
+        });
 
         const urlDestino = isEditando
             ? `${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos/${idEdicao}`
@@ -362,18 +388,31 @@ function configurarFormularioProdutoLojista() {
                 body: formData
             });
 
+            const resultado = await resposta.json();
+
             if (resposta.ok) {
-                alert(isEditando ? "Produto atualizado com sucesso!" : "Produto cadastrado no catálogo!");
+                alert(
+                    isEditando
+                        ? "Produto atualizado com sucesso!"
+                        : "Produto cadastrado no catálogo!"
+                );
+
                 resetarFormularioProdutoLojista();
                 carregarProdutosLojista(slugBancaAtualLojista);
+
             } else {
-                alert("Erro ao salvar o produto na API.");
+                console.error("Erro retornado pela API:", resultado);
+                alert(resultado.erro || "Erro ao salvar o produto na API.");
             }
+
         } catch (err) {
             console.error("Erro:", err);
             alert("Não foi possível conectar com a API.");
         }
     });
+
+    // Busca o botão no formulário novo, não no formulário removido.
+    const btnCancelar = novoForm.querySelector("#btn-cancelar-prod-lojista");
 
     if (btnCancelar) {
         btnCancelar.onclick = () => {
