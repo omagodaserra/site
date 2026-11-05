@@ -24,7 +24,7 @@ async function carregarProdutoBanca() {
     }
 
     try {
-        // Busca os dados completos da banca, que incluem o WhatsApp do lojista e seus produtos
+        // Busca os dados completos da banca, incluindo os produtos
         const resposta = await fetch(`${CONFIG_BANCA_PRODUTO.API_URL}/bancas/${slugBanca}`);
         if (!resposta.ok) throw new Error("Erro ao carregar dados da banca.");
 
@@ -65,7 +65,7 @@ function exibirProdutoBanca(produto, banca) {
         </div>
 
         <div class="produto-informacoes">
-            <p class="produto-categoria">Banca: ${banca.nome}</p>
+            <p class="produto-categoria">Banca Parceira: ${banca.nome}</p>
             <h1>${produto.nome}</h1>
             <p class="produto-descricao">${produto.descricao || 'Peça artesanal exclusiva do nosso reino.'}</p>
             
@@ -75,17 +75,17 @@ function exibirProdutoBanca(produto, banca) {
 
             <p class="produto-preco">R$ ${Number(produto.preco).toFixed(2).replace(".", ",")}</p>
 
-            <a href="#" class="btn-whatsapp-personalizado" id="produto-banca-whatsapp" target="_blank" rel="noopener noreferrer">
+            <a href="#" class="btn-whatsapp-personalizado" id="produto-whatsapp" target="_blank" rel="noopener noreferrer">
                 <img src="../assets/icones/whats.png" alt="WhatsApp" class="icone-contato-btn">
                 SABER MAIS (FALAR COM O LOJISTA)
             </a>
         </div>
     `;
 
-    inicializarGaleriaProdutos();
+    inicializarGaleriaProdutos(produto);
 
     // --- CONFIGURAR BOTÃO WHATSAPP EXCLUSIVO DO LOJISTA DA BANCA ---
-    const btnWhatsapp = document.getElementById("produto-banca-whatsapp");
+    const btnWhatsapp = document.getElementById("produto-whatsapp");
     if (btnWhatsapp) {
         btnWhatsapp.addEventListener("click", (e) => {
             e.preventDefault();
@@ -104,7 +104,7 @@ function exibirProdutoBanca(produto, banca) {
 
             mensagem += `\nPoderia me dar mais detalhes?`;
 
-            // Utiliza o número de WhatsApp cadastrado pelo lojista (ou número padrão do mago caso não tenha)
+            // Utiliza o número de WhatsApp cadastrado pelo lojista ou o padrão do Mago
             const numeroWhatsApp = banca.whatsapp || "5554996322787";
             const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
 
@@ -113,7 +113,7 @@ function exibirProdutoBanca(produto, banca) {
     }
 }
 
-function inicializarGaleriaProdutos() {
+function inicializarGaleriaProdutos(produto) {
     const imagemPrincipal = document.querySelector("#imagem-principal");
     const miniaturas = document.querySelectorAll(".miniatura");
 
