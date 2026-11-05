@@ -26,31 +26,26 @@ let chaveLojistaAtual = "";
 let slugBancaAtualLojista = "";
 let arquivosProdutosLojistaSelecionados = [];
 
+const secaoLogin = document.getElementById('secao-login');
+const secaoPainel = document.getElementById('secao-painel');
+const formLogin = document.getElementById('form-login');
+const btnSair = document.getElementById('btn-sair');
+
 document.addEventListener("DOMContentLoaded", () => {
-    configurarAnoRodape();
     configurarLogin();
-    configurarFormularioBanca();
-    configurarFormularioEvento();
     configurarBotaoSair();
     inicializarPreviewImagensLojista();
     renderizarCheckboxesCategorias("container-cat-master", "cat_master");
     renderizarCheckboxesCategorias("container-cat-lojista", "cat_lojista");
 });
 
-function configurarAnoRodape() {
-    const spanAno = document.getElementById("ano-atual");
-    if (spanAno) {
-        spanAno.textContent = new Date().getFullYear();
-    }
-}
-
-// Renderiza a lista de categorias com a trava de no máximo 2 selecionadas
+// Renderiza checkboxes com limite máximo de 2 seleções
 function renderizarCheckboxesCategorias(containerId, namePrefix) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    container.innerHTML = CATEGORIAS_OFICIAIS.map((cat, idx) => `
-        <label style="font-size: 0.95rem; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--grafite);">
+    container.innerHTML = CATEGORIAS_OFICIAIS.map((cat) => `
+        <label>
             <input type="checkbox" name="${namePrefix}" value="${cat}" class="chk-${namePrefix}">
             ${cat}
         </label>
@@ -84,21 +79,26 @@ function marcarCategoriasNaBanca(containerId, namePrefix, categoriasBanca = []) 
 }
 
 function configurarLogin() {
-    const formLogin = document.getElementById("form-login-admin");
     if (!formLogin) return;
 
     formLogin.addEventListener("submit", (e) => {
         e.preventDefault();
-        const credencial = document.getElementById("senha-ou-chave").value.trim();
-
-        document.getElementById("painel-login-wrapper").style.display = "none";
-        document.getElementById("painel-conteudo-restrito").style.display = "block";
+        const credencial = document.getElementById("senha-admin").value.trim();
 
         if (credencial === SENHA_ADMIN_MASTER) {
-            document.getElementById("bloco-admin-master").style.display = "block";
+            secaoLogin.style.display = "none";
+            secaoPainel.style.display = "block";
+
+            // Exibe blocos exclusivos de Admin Master
+            document.getElementById("bloco-bancas-master").style.display = "block";
+            document.getElementById("bloco-eventos-admin").style.display = "block";
+            document.getElementById("bloco-depoimentos-admin").style.display = "block";
+            document.getElementById("bloco-produtos-lojista").style.display = "none";
+
             carregarBancasAdmin();
             carregarEventosAdmin();
             carregarDepoimentosAdmin();
+            inicializarSanfonaAdmin();
         } else {
             verificarChaveLojista(credencial);
         }
@@ -115,10 +115,17 @@ function verificarChaveLojista(chave) {
                 chaveLojistaAtual = chave;
                 slugBancaAtualLojista = bancaEncontrada.slug;
 
-                document.getElementById("bloco-lojista-parceiro").style.display = "block";
+                secaoLogin.style.display = "none";
+                secaoPainel.style.display = "block";
+
+                // Oculta blocos de master e exibe o painel da banca específica do lojista
+                document.getElementById("bloco-bancas-master").style.display = "none";
+                document.getElementById("bloco-eventos-admin").style.display = "none";
+                document.getElementById("bloco-depoimentos-admin").style.display = "none";
+                document.getElementById("bloco-produtos-lojista").style.display = "block";
+
                 document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${bancaEncontrada.nome}`;
 
-                // Preenche os dados atuais
                 document.getElementById("lojista-nome").value = bancaEncontrada.nome || "";
                 document.getElementById("lojista-slogan").value = bancaEncontrada.slogan || "";
                 document.getElementById("lojista-descricao").value = bancaEncontrada.descricao || "";
@@ -126,28 +133,46 @@ function verificarChaveLojista(chave) {
                 document.getElementById("lojista-instagram").value = bancaEncontrada.instagram || "";
                 document.getElementById("lojista-localizacao").value = bancaEncontrada.localizacao || "";
 
-                // Marca as categorias atuais da banca
                 marcarCategoriasNaBanca("container-cat-lojista", "cat_lojista", bancaEncontrada.categorias || []);
 
                 configurarFormularioLojista();
                 carregarProdutosLojista(bancaEncontrada.slug);
                 configurarFormularioProdutoLojista();
+                inicializarSanfonaAdmin();
             } else {
                 alert("Credencial inválida! Verifique sua senha de administrador ou chave de acesso.");
-                window.location.reload();
             }
         })
         .catch(err => {
             console.error("Erro ao validar chave:", err);
             alert("Erro de conexão com o reino.");
-            window.location.reload();
         });
 }
 
 function configurarBotaoSair() {
-    const btnSair = document.getElementById("btn-sair");
     if (!btnSair) return;
-    btnSair.addEventListener("click", () => window.location.reload());
+
+    btnSair.addEventListener("click", () => {
+        secaoPainel.style.display = "none";
+        secaoLogin.style.display = "block";
+        document.getElementById("senha-admin").value = "";
+    });
+}
+
+// Lógica de Sanfona (Acordeão) para abrir blocos sob demanda
+function inicializarSanfonaAdmin() {
+    const botoesHeader = document.querySelectorAll('.btn-sanfona-header');
+
+    botoesHeader.forEach(botao => {
+        botao.replaceWith(botao.cloneNode(true));
+    });
+
+    document.querySelectorAll('.btn-sanfona-header').forEach(botao => {
+        botao.addEventListener('click', function () {
+            const blocoPai = this.closest('.bloco-sanfona');
+            blocoPai.classList.toggle('ativo');
+        });
+    });
 }
 
 // -----------------------------------------------------
@@ -189,11 +214,9 @@ function carregarBancasAdmin() {
         });
 }
 
-function configurarFormularioBanca() {
-    const form = document.getElementById("form-criar-banca");
-    if (!form) return;
-
-    form.addEventListener("submit", (e) => {
+const formCriarBanca = document.getElementById("form-criar-banca");
+if (formCriarBanca) {
+    formCriarBanca.addEventListener("submit", (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("nome", document.getElementById("banca-nome").value);
@@ -210,7 +233,7 @@ function configurarFormularioBanca() {
             .then(res => res.json())
             .then(resultado => {
                 alert(`Banca criada com sucesso! Chave gerada para o lojista: ${resultado.banca.chave_acesso}`);
-                form.reset();
+                formCriarBanca.reset();
                 carregarBancasAdmin();
             })
             .catch(err => {
@@ -300,7 +323,7 @@ function atualizarPreviewImagensLojista() {
     if (arquivosProdutosLojistaSelecionados.length > 0) {
         const aviso = document.createElement('p');
         aviso.style.cssText = 'width: 100%; font-size: 0.85rem; color: var(--cinza); margin-bottom: 5px;';
-        aviso.innerHTML = '⭐ <strong>Foto de Capa:</strong> A primeira imagem será a capa. Clique em outra para alternar:';
+        aviso.innerHTML = '⭐ <strong>Foto de Capa:</strong> A primeira imagem será a capa. Clique noutra para alternar:';
         containerPreview.appendChild(aviso);
     }
 
@@ -453,6 +476,9 @@ window.prepararEdicaoProdutoLojista = function (id, prodJsonStr) {
     document.getElementById("btn-salvar-prod-lojista").querySelector("span").textContent = "Atualizar Produto";
     document.getElementById("btn-cancelar-prod-lojista").style.display = "inline-flex";
 
+    // Abre automaticamente o bloco de gestão de produtos do lojista
+    document.getElementById('bloco-produtos-lojista')?.classList.add('ativo');
+
     window.scrollTo({ top: document.getElementById("form-criar-produto-lojista").offsetTop - 100, behavior: "smooth" });
 };
 
@@ -526,11 +552,9 @@ function carregarEventosAdmin() {
         });
 }
 
-function configurarFormularioEvento() {
-    const form = document.getElementById("form-evento");
-    if (!form) return;
-
-    form.addEventListener("submit", (e) => {
+const formEvento = document.getElementById("form-evento");
+if (formEvento) {
+    formEvento.addEventListener("submit", (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("nome", document.getElementById("evento-nome").value);
@@ -546,7 +570,7 @@ function configurarFormularioEvento() {
             .then(res => res.json())
             .then(() => {
                 alert("Evento cadastrado com sucesso!");
-                form.reset();
+                formEvento.reset();
                 carregarEventosAdmin();
             });
     });
