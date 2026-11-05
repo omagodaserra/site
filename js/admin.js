@@ -158,7 +158,7 @@ function configurarFormularioBanca() {
     });
 }
 
-window.excluirBanca = function(id) {
+window.excluirBanca = function (id) {
     if (!confirm("Tem certeza que deseja apagar esta banca?")) return;
     fetch(`${API_URL}/bancas/${id}`, { method: "DELETE" })
         .then(() => {
@@ -190,15 +190,15 @@ function configurarFormularioLojista() {
             method: "PUT",
             body: formData
         })
-        .then(res => res.json())
-        .then(resultado => {
-            alert("Informações da banca atualizadas com sucesso!");
-            document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${resultado.banca.nome}`;
-        })
-        .catch(err => {
-            console.error("Erro:", err);
-            alert("Erro ao atualizar os dados da banca.");
-        });
+            .then(res => res.json())
+            .then(resultado => {
+                alert("Informações da banca atualizadas com sucesso!");
+                document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${resultado.banca.nome}`;
+            })
+            .catch(err => {
+                console.error("Erro:", err);
+                alert("Erro ao atualizar os dados da banca.");
+            });
     };
 }
 
@@ -336,16 +336,19 @@ function configurarFormularioProdutoLojista() {
         const idEdicao = document.getElementById("edit-prod-id").value;
         const isEditando = idEdicao !== "";
 
+        // No evento de submit de produto 
         const formData = new FormData();
         formData.append("nome", document.getElementById("prod-nome").value);
         formData.append("preco", document.getElementById("prod-preco").value);
         formData.append("descricao", document.getElementById("prod-descricao").value);
         formData.append("disponibilidade", document.getElementById("prod-disponibilidade").value);
 
-        // Anexa rigorosamente cada arquivo selecionado no preview interativo ao FormData
-        arquivosProdutosLojistaSelecionados.forEach(file => {
-            formData.append("imagens", file);
-        });
+        // Certifica-se de que existem arquivos antes de anexar
+        if (arquivosProdutosLojistaSelecionados && arquivosProdutosLojistaSelecionados.length > 0) {
+            arquivosProdutosLojistaSelecionados.forEach(file => {
+                formData.append("imagens", file);
+            });
+        }
 
         const urlDestino = isEditando
             ? `${API_URL}/bancas/chave/${chaveLojistaAtual}/produtos/${idEdicao}`
@@ -493,7 +496,7 @@ function configurarFormularioEvento() {
     });
 }
 
-window.excluirEvento = function(id) {
+window.excluirEvento = function (id) {
     if (!confirm("Tem certeza que deseja apagar este evento?")) return;
     fetch(`${API_URL}/eventos/${id}`, { method: "DELETE" })
         .then(() => {
@@ -556,7 +559,7 @@ function carregarDepoimentosAdmin() {
         });
 }
 
-window.aprovarDepoimento = function(id) {
+window.aprovarDepoimento = function (id) {
     fetch(`${API_URL}/depoimentos/${id}/aprovar`, { method: "PUT" })
         .then(() => {
             alert("Depoimento aprovado e publicado!");
@@ -564,7 +567,7 @@ window.aprovarDepoimento = function(id) {
         });
 }
 
-window.excluirDepoimento = function(id) {
+window.excluirDepoimento = function (id) {
     if (!confirm("Tem certeza que deseja excluir este depoimento?")) return;
     fetch(`${API_URL}/depoimentos/${id}`, { method: "DELETE" })
         .then(() => {
