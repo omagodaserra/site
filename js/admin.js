@@ -5,9 +5,23 @@
 const API_URL = "https://omagodaserra.pythonanywhere.com";
 const SENHA_ADMIN_MASTER = "mago1234";
 
+// Lista oficial das 10 Categorias
+const CATEGORIAS_OFICIAIS = [
+    "Artesanato & Decoração",
+    "Moda, Vestuário & Acessórios",
+    "Brechó, Moda Vintage & Garimpo",
+    "Artistas & Arte Autoral",
+    "Antiguidades, Garimpo & Colecionismo",
+    "Gastronomia Artesanal & Colonial",
+    "Doces, Pães & Panificação",
+    "Bebidas Artesanais",
+    "Pelúcias, Brinquedos & Universo Lúdico",
+    "Plantas, Botânica & Sustentabilidade"
+];
+
 const inputsPreviewImagensLojista = new WeakSet();
 
-// Variáveis globais do painel
+// Variáveis globais
 let chaveLojistaAtual = "";
 let slugBancaAtualLojista = "";
 let arquivosProdutosLojistaSelecionados = [];
@@ -19,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
     configurarFormularioEvento();
     configurarBotaoSair();
     inicializarPreviewImagensLojista();
+    renderizarCheckboxesCategorias("container-cat-master", "cat_master");
+    renderizarCheckboxesCategorias("container-cat-lojista", "cat_lojista");
 });
 
 function configurarAnoRodape() {
@@ -26,6 +42,45 @@ function configurarAnoRodape() {
     if (spanAno) {
         spanAno.textContent = new Date().getFullYear();
     }
+}
+
+// Renderiza a lista de categorias com a trava de no máximo 2 selecionadas
+function renderizarCheckboxesCategorias(containerId, namePrefix) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = CATEGORIAS_OFICIAIS.map((cat, idx) => `
+        <label style="font-size: 0.95rem; display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--grafite);">
+            <input type="checkbox" name="${namePrefix}" value="${cat}" class="chk-${namePrefix}">
+            ${cat}
+        </label>
+    `).join('');
+
+    const checkboxes = container.querySelectorAll(`.chk-${namePrefix}`);
+    checkboxes.forEach(chk => {
+        chk.addEventListener("change", () => {
+            const selecionados = container.querySelectorAll(`.chk-${namePrefix}:checked`);
+            if (selecionados.length > 2) {
+                chk.checked = false;
+                alert("Pode escolher no máximo 2 categorias para a banca!");
+            }
+        });
+    });
+}
+
+function obterCategoriasSelecionadas(namePrefix) {
+    const checkboxes = document.querySelectorAll(`.chk-${namePrefix}:checked`);
+    return Array.from(checkboxes).map(c => c.value);
+}
+
+function marcarCategoriasNaBanca(containerId, namePrefix, categoriasBanca = []) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const checkboxes = container.querySelectorAll(`.chk-${namePrefix}`);
+    checkboxes.forEach(chk => {
+        chk.checked = categoriasBanca.includes(chk.value);
+    });
 }
 
 function configurarLogin() {
@@ -63,13 +118,16 @@ function verificarChaveLojista(chave) {
                 document.getElementById("bloco-lojista-parceiro").style.display = "block";
                 document.getElementById("titulo-painel-lojista").textContent = `Gestão da Banca: ${bancaEncontrada.nome}`;
 
-                // Preenche o formulário do lojista com os dados atuais da banca dele
+                // Preenche os dados atuais
                 document.getElementById("lojista-nome").value = bancaEncontrada.nome || "";
                 document.getElementById("lojista-slogan").value = bancaEncontrada.slogan || "";
                 document.getElementById("lojista-descricao").value = bancaEncontrada.descricao || "";
                 document.getElementById("lojista-whatsapp").value = bancaEncontrada.whatsapp || "";
                 document.getElementById("lojista-instagram").value = bancaEncontrada.instagram || "";
                 document.getElementById("lojista-localizacao").value = bancaEncontrada.localizacao || "";
+
+                // Marca as categorias atuais da banca
+                marcarCategoriasNaBanca("container-cat-lojista", "cat_lojista", bancaEncontrada.categorias || []);
 
                 configurarFormularioLojista();
                 carregarProdutosLojista(bancaEncontrada.slug);
@@ -89,10 +147,7 @@ function verificarChaveLojista(chave) {
 function configurarBotaoSair() {
     const btnSair = document.getElementById("btn-sair");
     if (!btnSair) return;
-
-    btnSair.addEventListener("click", () => {
-        window.location.reload();
-    });
+    btnSair.addEventListener("click", () => window.location.reload());
 }
 
 // -----------------------------------------------------
@@ -116,13 +171,15 @@ function carregarBancasAdmin() {
                 card.className = "card-depoimento-publico";
                 card.style.marginBottom = "15px";
 
+                const catsTexto = (banca.categorias && banca.categorias.length > 0) ? banca.categorias.join(", ") : "Nenhuma";
+
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
                         <div>
                             <h3 style="font-family: 'Cinzel', serif; color: var(--azul-principal);">${banca.nome}</h3>
                             <p style="font-size: 0.9rem; color: var(--cinza);">URL: /pages/banca.html?slug=${banca.slug}</p>
+                            <p style="font-size: 0.85rem; color: var(--azul-claro);">Categorias: <strong>${catsTexto}</strong></p>
                             <p style="font-size: 0.9rem; color: var(--dourado-escuro);">Chave: <code>${banca.chave_acesso}</code></p>
-                            <p style="font-size: 0.85rem; color: var(--cinza);">📞 WhatsApp: ${banca.whatsapp || 'Não informado'} | 📸 Insta: ${banca.instagram ? 'Sim' : 'Não'}</p>
                         </div>
                         <button class="btn-mago-base btn-tipo-1" onclick="excluirBanca(${banca.id})" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Excluir</button>
                     </div>
@@ -142,6 +199,9 @@ function configurarFormularioBanca() {
         formData.append("nome", document.getElementById("banca-nome").value);
         formData.append("slug", document.getElementById("banca-slug").value);
         formData.append("slogan", document.getElementById("banca-slogan").value);
+
+        const categorias = obterCategoriasSelecionadas("cat_master");
+        formData.append("categorias", JSON.stringify(categorias));
 
         const logoInput = document.getElementById("banca-logo");
         if (logoInput.files[0]) formData.append("imagens", logoInput.files[0]);
@@ -183,6 +243,9 @@ function configurarFormularioLojista() {
         formData.append("instagram", document.getElementById("lojista-instagram").value);
         formData.append("localizacao", document.getElementById("lojista-localizacao").value);
 
+        const categorias = obterCategoriasSelecionadas("cat_lojista");
+        formData.append("categorias", JSON.stringify(categorias));
+
         const logoInput = document.getElementById("lojista-logo");
         if (logoInput.files[0]) {
             formData.append("imagens", logoInput.files[0]);
@@ -204,11 +267,9 @@ function configurarFormularioLojista() {
     };
 }
 
-
 // -----------------------------------------------------
-// GESTÃO DE PRODUTOS DA BANCA PELO LOJISTA (COM CAPA E MÚLTIPLAS FOTOS)
+// GESTÃO DE PRODUTOS DA BANCA PELO LOJISTA
 // -----------------------------------------------------
-
 function inicializarPreviewImagensLojista() {
     const inputImg = document.getElementById('prod-imagens');
     if (!inputImg) return;
@@ -218,22 +279,14 @@ function inicializarPreviewImagensLojista() {
     if (!containerPreview) {
         containerPreview = document.createElement('div');
         containerPreview.id = 'preview-imagens-lojista';
-        containerPreview.style.cssText =
-            'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; width: 100%;';
-
-        inputImg.parentNode.insertBefore(
-            containerPreview,
-            inputImg.nextSibling
-        );
+        containerPreview.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; width: 100%;';
+        inputImg.parentNode.insertBefore(containerPreview, inputImg.nextSibling);
     }
 
-    // Registra o evento uma única vez em cada elemento input.
     if (!inputsPreviewImagensLojista.has(inputImg)) {
         inputsPreviewImagensLojista.add(inputImg);
-
         inputImg.addEventListener('change', function (e) {
             arquivosProdutosLojistaSelecionados = Array.from(e.target.files);
-
             atualizarPreviewImagensLojista();
         });
     }
@@ -247,7 +300,7 @@ function atualizarPreviewImagensLojista() {
     if (arquivosProdutosLojistaSelecionados.length > 0) {
         const aviso = document.createElement('p');
         aviso.style.cssText = 'width: 100%; font-size: 0.85rem; color: var(--cinza); margin-bottom: 5px;';
-        aviso.innerHTML = '⭐ <strong>Foto de Capa:</strong> A primeira imagem (com moldura dourada) será a capa. Clique em outra para defini-la como capa:';
+        aviso.innerHTML = '⭐ <strong>Foto de Capa:</strong> A primeira imagem será a capa. Clique em outra para alternar:';
         containerPreview.appendChild(aviso);
     }
 
@@ -258,14 +311,9 @@ function atualizarPreviewImagensLojista() {
             const ehCapa = index === 0;
 
             wrapper.style.cssText = `
-                position: relative;
-                width: 75px;
-                height: 75px;
+                position: relative; width: 75px; height: 75px;
                 border: 3px solid ${ehCapa ? 'var(--dourado, #d4af37)' : '#ccc'};
-                border-radius: 8px;
-                overflow: hidden;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                border-radius: 8px; overflow: hidden; cursor: pointer;
             `;
 
             const img = document.createElement('img');
@@ -309,7 +357,6 @@ function carregarProdutosLojista(slug) {
 
             produtos.forEach(prod => {
                 const produtoId = prod.id || prod._id;
-                // Garante que a capa puxa corretamente a primeira imagem do array de imagens do produto[cite: 9]
                 const capa = (prod.imagens && prod.imagens.length > 0) ? prod.imagens[0] : '../assets/logo/logo.png';
 
                 const card = document.createElement("div");
@@ -340,17 +387,12 @@ function carregarProdutosLojista(slug) {
 
 function configurarFormularioProdutoLojista() {
     const form = document.getElementById("form-criar-produto-lojista");
-
     if (!form) return;
 
-    // Clona o formulário para evitar duplicação de eventos.
     const novoForm = form.cloneNode(true);
     form.parentNode.replaceChild(novoForm, form);
 
-    // IMPORTANTE: registra novamente o evento no input clonado.
     inicializarPreviewImagensLojista();
-
-    // Reinicia a seleção de arquivos.
     arquivosProdutosLojistaSelecionados = [];
 
     novoForm.addEventListener("submit", async function (e) {
@@ -360,17 +402,10 @@ function configurarFormularioProdutoLojista() {
         const isEditando = idEdicao !== "";
 
         const formData = new FormData();
-
         formData.append("nome", novoForm.querySelector("#prod-nome").value);
         formData.append("preco", novoForm.querySelector("#prod-preco").value);
         formData.append("descricao", novoForm.querySelector("#prod-descricao").value);
         formData.append("disponibilidade", novoForm.querySelector("#prod-disponibilidade").value);
-
-        // Adiciona todas as imagens selecionadas.
-        console.log(
-            "Imagens selecionadas para envio:",
-            arquivosProdutosLojistaSelecionados.length
-        );
 
         arquivosProdutosLojistaSelecionados.forEach(file => {
             formData.append("imagens", file);
@@ -383,41 +418,25 @@ function configurarFormularioProdutoLojista() {
         const metodoHttp = isEditando ? "PUT" : "POST";
 
         try {
-            const resposta = await fetch(urlDestino, {
-                method: metodoHttp,
-                body: formData
-            });
-
+            const resposta = await fetch(urlDestino, { method: metodoHttp, body: formData });
             const resultado = await resposta.json();
 
             if (resposta.ok) {
-                alert(
-                    isEditando
-                        ? "Produto atualizado com sucesso!"
-                        : "Produto cadastrado no catálogo!"
-                );
-
+                alert(isEditando ? "Produto atualizado com sucesso!" : "Produto cadastrado no catálogo!");
                 resetarFormularioProdutoLojista();
                 carregarProdutosLojista(slugBancaAtualLojista);
-
             } else {
-                console.error("Erro retornado pela API:", resultado);
                 alert(resultado.erro || "Erro ao salvar o produto na API.");
             }
-
         } catch (err) {
             console.error("Erro:", err);
             alert("Não foi possível conectar com a API.");
         }
     });
 
-    // Busca o botão no formulário novo, não no formulário removido.
     const btnCancelar = novoForm.querySelector("#btn-cancelar-prod-lojista");
-
     if (btnCancelar) {
-        btnCancelar.onclick = () => {
-            resetarFormularioProdutoLojista();
-        };
+        btnCancelar.onclick = () => resetarFormularioProdutoLojista();
     }
 }
 
@@ -471,7 +490,6 @@ window.excluirProdutoLojista = async function (idProduto) {
     }
 };
 
-
 // -----------------------------------------------------
 // GESTÃO DE EVENTOS / FEIRAS (ADMIN MASTER)
 // -----------------------------------------------------
@@ -492,7 +510,6 @@ function carregarEventosAdmin() {
                 const card = document.createElement("div");
                 card.className = "card-depoimento-publico";
                 card.style.marginBottom = "15px";
-
                 const datasTexto = Array.isArray(ev.datas) ? ev.datas.join(', ') : '';
 
                 card.innerHTML = `
@@ -543,7 +560,6 @@ window.excluirEvento = function (id) {
             carregarEventosAdmin();
         });
 }
-
 
 // -----------------------------------------------------
 // MODERAÇÃO DE DEPOIMENTOS (ADMIN MASTER)
