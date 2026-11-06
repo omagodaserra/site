@@ -178,8 +178,8 @@ function inicializarSanfonaAdmin() {
     });
 }
 
-// -----------------------------------------------------
-// GESTÃO DE BANCAS (ADMIN MASTER)
+/// -----------------------------------------------------
+// GESTÃO DE BANCAS (ADMIN MASTER) - PADRÃO DE CARDS DO SITE
 // -----------------------------------------------------
 function carregarBancasAdmin() {
     const container = document.getElementById("lista-bancas-admin");
@@ -194,26 +194,96 @@ function carregarBancasAdmin() {
                 return;
             }
 
-            bancas.forEach(banca => {
-                const card = document.createElement("div");
-                card.className = "card-depoimento-publico";
-                card.style.marginBottom = "15px";
+            // Wrapper em carrossel horizontal ou grade moderna idêntica à página inicial
+            const wrapperCarrossel = document.createElement("div");
+            wrapperCarrossel.style.cssText = `
+                display: flex; flex-direction: column; gap: 15px; width: 100%;
+            `;
 
-                const catsTexto = (banca.categorias && banca.categorias.length > 0) ? banca.categorias.join(", ") : "Nenhuma";
+            const listaCardsContainer = document.createElement("div");
+            listaCardsContainer.style.cssText = `
+                display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+                padding-bottom: 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            `;
+
+            const totalBancas = bancas.length;
+
+            bancas.forEach((banca) => {
+                const logoSrc = banca.imagens && banca.imagens.length > 0 ? banca.imagens[0] : '../assets/logo/logo.png';
+                const catsTexto = (banca.categorias && banca.categorias.length > 0) ? banca.categorias.join(", ") : "Sem categoria";
+
+                const card = document.createElement("div");
+                card.className = "produto-card"; // Usa a mesma classe dos cards da página inicial
+                card.style.cssText = `
+                    flex: 0 0 220px !important; width: 220px !important; min-width: 220px !important;
+                    scroll-snap-align: start; background: var(--branco); border-radius: 10px; overflow: hidden;
+                    border: 1px solid var(--cinza-claro); box-shadow: var(--sombra); display: flex; flex-direction: column;
+                `;
 
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                        <div>
-                            <h3 style="font-family: 'Cinzel', serif; color: var(--azul-principal);">${banca.nome}</h3>
-                            <p style="font-size: 0.9rem; color: var(--cinza);">URL: /pages/banca.html?slug=${banca.slug}</p>
-                            <p style="font-size: 0.85rem; color: var(--azul-claro);">Categorias: <strong>${catsTexto}</strong></p>
-                            <p style="font-size: 0.9rem; color: var(--dourado-escuro);">Chave: <code>${banca.chave_acesso}</code></p>
+                    <div style="position: relative; width: 100%; height: 130px; background: #f9f9f9;">
+                        <img src="${logoSrc}" alt="${banca.nome}" style="width: 100%; height: 100%; object-fit: contain; padding: 10px;" onerror="this.src='../assets/logo/logo.png'">
+                    </div>
+                    <div style="padding: 12px; display: flex; flex-direction: column; flex-grow: 1; text-align: left;">
+                        <h4 style="font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--azul-profundo); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${banca.nome}">${banca.nome}</h4>
+                        <p style="font-size: 0.75rem; color: var(--azul-claro); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${catsTexto}">🏷️ ${catsTexto}</p>
+                        <p style="font-size: 0.75rem; color: var(--dourado-escuro); margin-bottom: 8px;">🔑 <code>${banca.chave_acesso}</code></p>
+                        <div style="margin-top: auto; display: flex; gap: 6px;">
+                            <a href="banca.html?slug=${banca.slug}" target="_blank" class="btn-mago-base btn-tipo-1" style="flex: 1; padding: 4px 6px; font-size: 0.7rem; min-height: 28px; text-align: center;">Ver</a>
+                            <button class="btn-mago-base btn-tipo-2" onclick="excluirBanca(${banca.id})" style="flex: 1; padding: 4px 6px; font-size: 0.7rem; min-height: 28px; background: #c0392b !important;">Excluir</button>
                         </div>
-                        <button class="btn-mago-base btn-tipo-1" onclick="excluirBanca(${banca.id})" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Excluir</button>
                     </div>
                 `;
-                container.appendChild(card);
+                listaCardsContainer.appendChild(card);
             });
+
+            wrapperCarrossel.appendChild(listaCardsContainer);
+
+            // Bolinhas indicadoras de posição para o Administrador Master saber quantas bancas existem e em qual está
+            const indicadorContainer = document.createElement("div");
+            indicadorContainer.style.cssText = `
+                display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px;
+            `;
+
+            for (let i = 0; i < totalBancas; i++) {
+                const bolinha = document.createElement("span");
+                bolinha.className = `admin-indicador-bolinha ${i === 0 ? 'ativa' : ''}`;
+                bolinha.style.cssText = `
+                    width: 10px; height: 10px; border-radius: 50%;
+                    background-color: ${i === 0 ? 'var(--azul-neons, #4a90e2)' : '#ccc'};
+                    display: inline-block; cursor: pointer; transition: background-color 0.3s ease;
+                `;
+                
+                bolinha.addEventListener('click', () => {
+                    const cardAlvo = listaCardsContainer.children[i];
+                    if (cardAlvo) {
+                        cardAlvo.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+                    }
+                });
+
+                indicadorContainer.appendChild(bolinha);
+            }
+
+            // Atualiza a bolinha ativa ao fazer scroll na lista de bancas
+            listaCardsContainer.addEventListener('scroll', () => {
+                const scrollLeft = listaCardsContainer.scrollLeft;
+                const cardWidth = 236; // 220px do card + 16px de gap
+                const indexAtual = Math.round(scrollLeft / cardWidth);
+
+                const bolinhas = indicadorContainer.querySelectorAll('.admin-indicador-bolinha');
+                bolinhas.forEach((b, idx) => {
+                    if (idx === indexAtual) {
+                        b.style.backgroundColor = 'var(--azul-neons, #4a90e2)';
+                        b.classList.add('ativa');
+                    } else {
+                        b.style.backgroundColor = '#ccc';
+                        b.classList.remove('ativa');
+                    }
+                });
+            });
+
+            wrapperCarrossel.appendChild(indicadorContainer);
+            container.appendChild(wrapperCarrossel);
         });
 }
 
@@ -535,7 +605,6 @@ function carregarEventosAdmin() {
                 return;
             }
 
-            // Wrapper principal em estilo carrossel compacto / grade para o Admin Master
             const wrapperCarrossel = document.createElement("div");
             wrapperCarrossel.style.cssText = `
                 display: flex; flex-direction: column; gap: 15px; width: 100%;
@@ -547,15 +616,13 @@ function carregarEventosAdmin() {
                 padding-bottom: 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
             `;
 
-            let paginaAtual = 0;
             const totalEventos = eventos.length;
 
-            eventos.forEach((ev, index) => {
-                const datasTexto = Array.isArray(ev.datas) ? ev.datas.join(', ') : '';
+            eventos.forEach((ev) => {
+                const datasTexto = Array.isArray(ev.datas) ? ev.datas.join(', ') : (ev.datas || '');
                 const imagemSrc = ev.imagem ? ev.imagem : '../assets/logo/logo.png';
 
                 const card = document.createElement("div");
-                card.className = "produto-card"; // Usa o padrão visual dos cards do site
                 card.style.cssText = `
                     flex: 0 0 220px !important; width: 220px !important; min-width: 220px !important;
                     scroll-snap-align: start; background: var(--branco); border-radius: 10px; overflow: hidden;
@@ -578,7 +645,6 @@ function carregarEventosAdmin() {
 
             wrapperCarrossel.appendChild(listaCardsContainer);
 
-            // Criar as bolinhas indicadoras de posição (para o admin saber quantas feiras faltam / em qual está)
             const indicadorContainer = document.createElement("div");
             indicadorContainer.style.cssText = `
                 display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px;
@@ -586,14 +652,13 @@ function carregarEventosAdmin() {
 
             for (let i = 0; i < totalEventos; i++) {
                 const bolinha = document.createElement("span");
-                bolinha.className = `indicador-bolinha ${i === 0 ? 'ativa' : ''}`;
+                bolinha.className = `admin-indicador-bolinha ${i === 0 ? 'ativa' : ''}`;
                 bolinha.style.cssText = `
                     width: 10px; height: 10px; border-radius: 50%;
                     background-color: ${i === 0 ? 'var(--azul-neons, #4a90e2)' : '#ccc'};
                     display: inline-block; cursor: pointer; transition: background-color 0.3s ease;
                 `;
                 
-                // Ao clicar na bolinha, o carrossel desloca-se para o evento correspondente
                 bolinha.addEventListener('click', () => {
                     const cardAlvo = listaCardsContainer.children[i];
                     if (cardAlvo) {
@@ -604,13 +669,12 @@ function carregarEventosAdmin() {
                 indicadorContainer.appendChild(bolinha);
             }
 
-            // Atualiza a bolinha ativa conforme o administrador faz scroll na lista de feiras
             listaCardsContainer.addEventListener('scroll', () => {
                 const scrollLeft = listaCardsContainer.scrollLeft;
-                const cardWidth = 236; // 220px do card + 16px de gap
+                const cardWidth = 236;
                 const indexAtual = Math.round(scrollLeft / cardWidth);
 
-                const bolinhas = indicadorContainer.querySelectorAll('.indicador-bolinha');
+                const bolinhas = indicadorContainer.querySelectorAll('.admin-indicador-bolinha');
                 bolinhas.forEach((b, idx) => {
                     if (idx === indexAtual) {
                         b.style.backgroundColor = 'var(--azul-neons, #4a90e2)';
@@ -729,6 +793,7 @@ window.excluirDepoimento = function (id) {
             carregarDepoimentosAdmin();
         });
 }
+
 // =====================================================
 // PRÉ-VISUALIZAÇÃO DE IMAGENS ESTILO CARD COM BOLINHAS INDICADORAS
 // =====================================================
@@ -755,7 +820,6 @@ function configurarPreviewCardDinamico(inputId, containerPreviewId, tipoCard = '
         containerPreview.innerHTML = '';
         if (arquivosSelecionados.length === 0) return;
 
-        // Cria leitores para as imagens selecionadas
         let leiturasConcluidas = 0;
         let urlsImagens = [];
 
@@ -807,7 +871,6 @@ function configurarPreviewCardDinamico(inputId, containerPreviewId, tipoCard = '
             </div>
         `;
 
-        // Evento de clique nas bolinhas indicadoras para deslizar/mudar a foto
         containerPreview.querySelectorAll('.indicador-bolinha').forEach(bolinha => {
             bolinha.addEventListener('click', () => {
                 indiceAtual = parseInt(bolinha.getAttribute('data-index'), 10);
@@ -816,9 +879,3 @@ function configurarPreviewCardDinamico(inputId, containerPreviewId, tipoCard = '
         });
     }
 }
-
-// Inicializa nos formulários de Bancas e Eventos ao carregar a página
-document.addEventListener("DOMContentLoaded", () => {
-    configurarPreviewCardDinamico('banca-logo', 'preview-banca-container', 'banca');
-    configurarPreviewCardDinamico('evento-imagem', 'preview-evento-container', 'evento');
-});
