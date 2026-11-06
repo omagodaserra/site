@@ -37,6 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarPreviewImagensLojista();
     renderizarCheckboxesCategorias("container-cat-master", "cat_master");
     renderizarCheckboxesCategorias("container-cat-lojista", "cat_lojista");
+    
+    configurarPreviewCardDinamico('banca-logo', 'preview-banca-container', 'banca');
+    configurarPreviewCardDinamico('evento-imagem', 'preview-evento-container', 'evento');
 });
 
 // Renderiza checkboxes com limite máximo de 2 seleções
@@ -654,3 +657,96 @@ window.excluirDepoimento = function (id) {
             carregarDepoimentosAdmin();
         });
 }
+// =====================================================
+// PRÉ-VISUALIZAÇÃO DE IMAGENS ESTILO CARD COM BOLINHAS INDICADORAS
+// =====================================================
+
+function configurarPreviewCardDinamico(inputId, containerPreviewId, tipoCard = 'banca') {
+    const inputImg = document.getElementById(inputId);
+    if (!inputImg) return;
+
+    let containerPreview = document.getElementById(containerPreviewId);
+    if (!containerPreview) {
+        containerPreview = document.createElement('div');
+        containerPreview.id = containerPreviewId;
+        inputImg.parentNode.insertBefore(containerPreview, inputImg.nextSibling);
+    }
+
+    let arquivosSelecionados = [];
+
+    inputImg.addEventListener('change', function (e) {
+        arquivosSelecionados = Array.from(e.target.files);
+        renderizarCardPreview();
+    });
+
+    function renderizarCardPreview() {
+        containerPreview.innerHTML = '';
+        if (arquivosSelecionados.length === 0) return;
+
+        // Cria leitores para as imagens selecionadas
+        let leiturasConcluidas = 0;
+        let urlsImagens = [];
+
+        arquivosSelecionados.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                urlsImagens[index] = e.target.result;
+                leiturasConcluidas++;
+
+                if (leiturasConcluidas === arquivosSelecionados.length) {
+                    desenharCardNaTela(urlsImagens);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    let indiceAtual = 0;
+
+    function desenharCardNaTela(imagens) {
+        if (indiceAtual >= imagens.length) indiceAtual = 0;
+
+        const imagemAtiva = imagens[indiceAtual] || '../assets/logo/logo.png';
+        const nomeTitulo = document.getElementById(tipoCard === 'banca' ? 'banca-nome' : 'evento-nome')?.value || 'Pré-visualização';
+        const subtitulo = tipoCard === 'banca' 
+            ? (document.getElementById('banca-slogan')?.value || 'Criações artesanais exclusivas.')
+            : `📍 ${document.getElementById('evento-local')?.value || 'Local do Evento'}`;
+
+        containerPreview.innerHTML = `
+            <div class="preview-card-container">
+                <p style="font-size: 0.85rem; color: var(--dourado-claro); font-family: 'Cinzel', serif; margin-bottom: -5px;">Pré-visualização do Card:</p>
+                <div class="preview-card-wrapper">
+                    <div class="preview-card-img-box">
+                        <img src="${imagemAtiva}" alt="Pré-visualização">
+                    </div>
+                    <div class="produto-card-body" style="padding: 14px; display: flex; flex-direction: column;">
+                        <h3 style="font-family: 'Cinzel', serif; font-size: 1.05rem; color: var(--azul-profundo); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${nomeTitulo}</h3>
+                        <p style="font-size: 0.9rem; color: var(--cinza); margin-bottom: 0; line-height: 1.3;">${subtitulo}</p>
+                    </div>
+                </div>
+                ${imagens.length > 1 ? `
+                    <div class="carrossel-indicadores">
+                        ${imagens.map((_, i) => `
+                            <span class="indicador-bolinha ${i === indiceAtual ? 'ativa' : ''}" data-index="${i}"></span>
+                        `).join('')}
+                    </div>
+                    <small style="color: #a0aec0; font-size: 0.75rem;">(Clique nas bolinhas para alternar as fotos)</small>
+                ` : ''}
+            </div>
+        `;
+
+        // Evento de clique nas bolinhas indicadoras para deslizar/mudar a foto
+        containerPreview.querySelectorAll('.indicador-bolinha').forEach(bolinha => {
+            bolinha.addEventListener('click', () => {
+                indiceAtual = parseInt(bolinha.getAttribute('data-index'), 10);
+                desenharCardNaTela(imagens);
+            });
+        });
+    }
+}
+
+// Inicializa nos formulários de Bancas e Eventos ao carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+    configurarPreviewCardDinamico('banca-logo', 'preview-banca-container', 'banca');
+    configurarPreviewCardDinamico('evento-imagem', 'preview-evento-container', 'evento');
+});
