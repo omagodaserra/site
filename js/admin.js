@@ -520,7 +520,7 @@ window.excluirProdutoLojista = async function (idProduto) {
 };
 
 // -----------------------------------------------------
-// GESTÃO DE EVENTOS / FEIRAS (ADMIN MASTER)
+// GESTÃO DE EVENTOS / FEIRAS (ADMIN MASTER) - COMPACTO E COM INDICADORES
 // -----------------------------------------------------
 function carregarEventosAdmin() {
     const container = document.getElementById("lista-eventos-admin");
@@ -535,23 +535,95 @@ function carregarEventosAdmin() {
                 return;
             }
 
-            eventos.forEach(ev => {
-                const card = document.createElement("div");
-                card.className = "card-depoimento-publico";
-                card.style.marginBottom = "15px";
+            // Wrapper principal em estilo carrossel compacto / grade para o Admin Master
+            const wrapperCarrossel = document.createElement("div");
+            wrapperCarrossel.style.cssText = `
+                display: flex; flex-direction: column; gap: 15px; width: 100%;
+            `;
+
+            const listaCardsContainer = document.createElement("div");
+            listaCardsContainer.style.cssText = `
+                display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+                padding-bottom: 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            `;
+
+            let paginaAtual = 0;
+            const totalEventos = eventos.length;
+
+            eventos.forEach((ev, index) => {
                 const datasTexto = Array.isArray(ev.datas) ? ev.datas.join(', ') : '';
+                const imagemSrc = ev.imagem ? ev.imagem : '../assets/logo/logo.png';
+
+                const card = document.createElement("div");
+                card.className = "produto-card"; // Usa o padrão visual dos cards do site
+                card.style.cssText = `
+                    flex: 0 0 220px !important; width: 220px !important; min-width: 220px !important;
+                    scroll-snap-align: start; background: var(--branco); border-radius: 10px; overflow: hidden;
+                    border: 1px solid var(--cinza-claro); box-shadow: var(--sombra); display: flex; flex-direction: column;
+                `;
 
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                        <div>
-                            <h3 style="font-family: 'Cinzel', serif; color: var(--azul-principal);">${ev.nome}</h3>
-                            <p style="font-size: 0.9rem; color: var(--cinza);">📅 ${datasTexto} | 📍 ${ev.local}</p>
-                        </div>
-                        <button class="btn-mago-base btn-tipo-1" onclick="excluirEvento(${ev.id})" style="padding: 6px 14px; font-size: 0.85rem; min-height: 35px;">Excluir</button>
+                    <div style="position: relative; width: 100%; height: 120px; background: #f9f9f9;">
+                        <img src="${imagemSrc}" alt="${ev.nome}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/logo/logo.png'">
+                    </div>
+                    <div style="padding: 10px; display: flex; flex-direction: column; flex-grow: 1; text-align: left;">
+                        <h4 style="font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--azul-profundo); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${ev.nome}">${ev.nome}</h4>
+                        <p style="font-size: 0.8rem; color: var(--cinza); margin-bottom: 4px;">📅 ${datasTexto}</p>
+                        <p style="font-size: 0.8rem; color: var(--cinza); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">📍 ${ev.local}</p>
+                        <button class="btn-mago-base btn-tipo-2" onclick="excluirEvento(${ev.id})" style="margin-top: auto; padding: 4px 8px; font-size: 0.75rem; min-height: 30px; background: #c0392b !important; width: 100%;">Excluir</button>
                     </div>
                 `;
-                container.appendChild(card);
+                listaCardsContainer.appendChild(card);
             });
+
+            wrapperCarrossel.appendChild(listaCardsContainer);
+
+            // Criar as bolinhas indicadoras de posição (para o admin saber quantas feiras faltam / em qual está)
+            const indicadorContainer = document.createElement("div");
+            indicadorContainer.style.cssText = `
+                display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px;
+            `;
+
+            for (let i = 0; i < totalEventos; i++) {
+                const bolinha = document.createElement("span");
+                bolinha.className = `indicador-bolinha ${i === 0 ? 'ativa' : ''}`;
+                bolinha.style.cssText = `
+                    width: 10px; height: 10px; border-radius: 50%;
+                    background-color: ${i === 0 ? 'var(--azul-neons, #4a90e2)' : '#ccc'};
+                    display: inline-block; cursor: pointer; transition: background-color 0.3s ease;
+                `;
+                
+                // Ao clicar na bolinha, o carrossel desloca-se para o evento correspondente
+                bolinha.addEventListener('click', () => {
+                    const cardAlvo = listaCardsContainer.children[i];
+                    if (cardAlvo) {
+                        cardAlvo.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+                    }
+                });
+
+                indicadorContainer.appendChild(bolinha);
+            }
+
+            // Atualiza a bolinha ativa conforme o administrador faz scroll na lista de feiras
+            listaCardsContainer.addEventListener('scroll', () => {
+                const scrollLeft = listaCardsContainer.scrollLeft;
+                const cardWidth = 236; // 220px do card + 16px de gap
+                const indexAtual = Math.round(scrollLeft / cardWidth);
+
+                const bolinhas = indicadorContainer.querySelectorAll('.indicador-bolinha');
+                bolinhas.forEach((b, idx) => {
+                    if (idx === indexAtual) {
+                        b.style.backgroundColor = 'var(--azul-neons, #4a90e2)';
+                        b.classList.add('ativa');
+                    } else {
+                        b.style.backgroundColor = '#ccc';
+                        b.classList.remove('ativa');
+                    }
+                });
+            });
+
+            wrapperCarrossel.appendChild(indicadorContainer);
+            container.appendChild(wrapperCarrossel);
         });
 }
 
