@@ -1017,3 +1017,52 @@ section p:not(.carregando-texto):not(.texto-depoimento-limitado) {
     background-color: var(--azul-neons, #4a90e2) !important; /* Bolinha ativa na cor azul solicitada */
     transform: scale(1.2);
 }
+/* =========================================================
+   ESTILOS DE MINIATURAS E INDICADORES NO PAINEL ADMINISTRATIVO
+   ========================================================= */
+
+/* Container geral para a lista compacta de eventos no admin */
+.admin-eventos-carrossel-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+/* Área de rolagem horizontal dos cards de feiras/eventos */
+.admin-eventos-lista-cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-eventos-lista-cards::-webkit-scrollbar {
+    display: none;
+}
+
+/* Bolinhas indicadoras de posição para o administrador */
+.admin-carrossel-indicadores {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.admin-indicador-bolinha {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-indicador-bolinha.ativa {
+    background-color: var(--azul-neons, #4a90e2) !important;
+}
