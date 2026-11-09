@@ -178,8 +178,8 @@ function inicializarSanfonaAdmin() {
     });
 }
 
-/// -----------------------------------------------------
-// GESTÃO DE BANCAS (ADMIN MASTER) - PADRÃO DE CARDS DO SITE
+// -----------------------------------------------------
+// GESTÃO DE BANCAS (ADMIN MASTER) - ESPAÇO VAZIO ELIMINADO
 // -----------------------------------------------------
 function carregarBancasAdmin() {
     const container = document.getElementById("lista-bancas-admin");
@@ -194,62 +194,83 @@ function carregarBancasAdmin() {
                 return;
             }
 
-            // Wrapper em carrossel horizontal ou grade moderna idêntica à página inicial
             const wrapperCarrossel = document.createElement("div");
             wrapperCarrossel.style.cssText = `
-                display: flex; flex-direction: column; gap: 15px; width: 100%;
+                display: flex; flex-direction: column; gap: 2px; width: 100%;
             `;
 
             const listaCardsContainer = document.createElement("div");
             listaCardsContainer.style.cssText = `
-                display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
-                padding-bottom: 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+                display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory;
+                padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+                align-items: flex-start;
             `;
 
             const totalBancas = bancas.length;
 
             bancas.forEach((banca) => {
-                const logoSrc = banca.imagens && banca.imagens.length > 0 ? banca.imagens[0] : '../assets/logo/logo.png';
+                const logoSrc = (banca.imagens && banca.imagens.length > 0) ? banca.imagens[0] : (banca.logo ? banca.logo : '../assets/logo/logo.png');
                 const catsTexto = (banca.categorias && banca.categorias.length > 0) ? banca.categorias.join(", ") : "Sem categoria";
 
                 const card = document.createElement("div");
-                card.className = "produto-card"; // Usa a mesma classe dos cards da página inicial
                 card.style.cssText = `
-                    flex: 0 0 220px !important; width: 220px !important; min-width: 220px !important;
-                    scroll-snap-align: start; background: var(--branco); border-radius: 10px; overflow: hidden;
+                    flex: 0 0 135px !important; width: 135px !important; min-width: 135px !important;
+                    height: auto !important; min-height: 0 !important; max-height: none !important;
+                    scroll-snap-align: start; background: var(--branco); border-radius: 5px; overflow: hidden;
                     border: 1px solid var(--cinza-claro); box-shadow: var(--sombra); display: flex; flex-direction: column;
                 `;
 
                 card.innerHTML = `
-                    <div style="position: relative; width: 100%; height: 130px; background: #f9f9f9;">
-                        <img src="${logoSrc}" alt="${banca.nome}" style="width: 100%; height: 100%; object-fit: contain; padding: 10px;" onerror="this.src='../assets/logo/logo.png'">
+                    <div style="position: relative; width: 100%; height: 26px; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 0; margin: 0;">
+                        <img src="${logoSrc}" alt="${banca.nome}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='../assets/logo/logo.png'">
                     </div>
-                    <div style="padding: 12px; display: flex; flex-direction: column; flex-grow: 1; text-align: left;">
-                        <h4 style="font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--azul-profundo); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${banca.nome}">${banca.nome}</h4>
-                        <p style="font-size: 0.75rem; color: var(--azul-claro); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${catsTexto}">🏷️ ${catsTexto}</p>
-                        <p style="font-size: 0.75rem; color: var(--dourado-escuro); margin-bottom: 8px;">🔑 <code>${banca.chave_acesso}</code></p>
-                        <div style="margin-top: auto; display: flex; gap: 6px;">
-                            <a href="banca.html?slug=${banca.slug}" target="_blank" class="btn-mago-base btn-tipo-1" style="flex: 1; padding: 4px 6px; font-size: 0.7rem; min-height: 28px; text-align: center;">Ver</a>
-                            <button class="btn-mago-base btn-tipo-2" onclick="excluirBanca(${banca.id})" style="flex: 1; padding: 4px 6px; font-size: 0.7rem; min-height: 28px; background: #c0392b !important;">Excluir</button>
+                    <div style="padding: 2px 3px 2px 3px; display: flex; flex-direction: column; text-align: left; gap: 0px; margin: 0; width: 100%; box-sizing: border-box;">
+                        <h4 style="font-family: 'Cinzel', serif; font-size: 0.58rem; color: var(--azul-profundo); margin: 0; padding: 0; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;" title="${banca.nome}">${banca.nome}</h4>
+                        <p style="font-size: 0.42rem; color: var(--azul-claro); margin: 0; padding: 0; line-height: 1; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; width: 100%;" title="${catsTexto}">${catsTexto}</p>
+                        <p style="font-family: 'Courier New', Courier, monospace !important; font-size: 0.65rem !important; color: var(--dourado-escuro); margin: 0; padding: 0; width: 100%; white-space: nowrap; text-align: center; font-weight: bold; line-height: 1; letter-spacing: -0.2px;" title="${banca.chave_acesso}">${banca.chave_acesso}</p>
+                        
+                        <div style="display: flex; gap: 2px; width: 100%; margin: 1px 0 0 0; padding: 0;">
+                            <a href="banca.html?slug=${banca.slug}" target="_blank" class="btn-ver-admin" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; background-color: rgba(27, 42, 71, 0.95); color: var(--dourado-claro, #f3e5ab); border: 1px solid var(--dourado, #d4af37); border-radius: 3px; padding: 0px; font-family: 'Cinzel', serif; font-size: 0.38rem; font-weight: 600; text-decoration: none; text-align: center; min-height: 11px; transition: background-color 0.3s ease;">Ver</a>
+                            <button class="btn-excluir-admin" onclick="excluirBanca(${banca.id})" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; background-color: rgba(13, 21, 38, 0.85); color: var(--branco, #ffffff); border: 1px solid var(--dourado, #d4af37); border-radius: 3px; padding: 0px; font-family: 'Cinzel', serif; font-size: 0.38rem; font-weight: 600; text-align: center; min-height: 11px; cursor: pointer; transition: background-color 0.3s ease;">Excluir</button>
                         </div>
                     </div>
                 `;
+
+                // Efeito hover dinâmico em ambos os botões
+                const btnVer = card.querySelector('.btn-ver-admin');
+                const btnExcluir = card.querySelector('.btn-excluir-admin');
+
+                btnVer.addEventListener('mouseenter', () => {
+                    btnVer.style.backgroundColor = 'var(--azul-profundo, #0d1526)';
+                    btnVer.style.color = '#ffffff';
+                });
+                btnVer.addEventListener('mouseleave', () => {
+                    btnVer.style.backgroundColor = 'rgba(27, 42, 71, 0.95)';
+                    btnVer.style.color = 'var(--dourado-claro, #f3e5ab)';
+                });
+
+                btnExcluir.addEventListener('mouseenter', () => {
+                    btnExcluir.style.backgroundColor = 'var(--azul-profundo, #0d1526)';
+                });
+                btnExcluir.addEventListener('mouseleave', () => {
+                    btnExcluir.style.backgroundColor = 'rgba(13, 21, 38, 0.85)';
+                });
+
                 listaCardsContainer.appendChild(card);
             });
 
             wrapperCarrossel.appendChild(listaCardsContainer);
 
-            // Bolinhas indicadoras de posição para o Administrador Master saber quantas bancas existem e em qual está
             const indicadorContainer = document.createElement("div");
             indicadorContainer.style.cssText = `
-                display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 5px;
+                display: flex; justify-content: center; align-items: center; gap: 5px; margin-top: 2px;
             `;
 
             for (let i = 0; i < totalBancas; i++) {
                 const bolinha = document.createElement("span");
                 bolinha.className = `admin-indicador-bolinha ${i === 0 ? 'ativa' : ''}`;
                 bolinha.style.cssText = `
-                    width: 10px; height: 10px; border-radius: 50%;
+                    width: 6px; height: 6px; border-radius: 50%;
                     background-color: ${i === 0 ? 'var(--azul-neons, #4a90e2)' : '#ccc'};
                     display: inline-block; cursor: pointer; transition: background-color 0.3s ease;
                 `;
@@ -264,10 +285,9 @@ function carregarBancasAdmin() {
                 indicadorContainer.appendChild(bolinha);
             }
 
-            // Atualiza a bolinha ativa ao fazer scroll na lista de bancas
             listaCardsContainer.addEventListener('scroll', () => {
                 const scrollLeft = listaCardsContainer.scrollLeft;
-                const cardWidth = 236; // 220px do card + 16px de gap
+                const cardWidth = 143; // 135px do card + 8px de gap
                 const indexAtual = Math.round(scrollLeft / cardWidth);
 
                 const bolinhas = indicadorContainer.querySelectorAll('.admin-indicador-bolinha');
